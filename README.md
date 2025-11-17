@@ -1,2 +1,2 @@
-# FORMULARZE
+# FORMULARZ
 Formularze z danymi 
