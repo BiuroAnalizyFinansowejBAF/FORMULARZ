@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Główne</title>
+    <link rel="icon" href="baf_logo_p.png" type="image/png">
+    
+    <style>
+        /* --- RESET I BAZA --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7f6; /* Jasne, nowoczesne tło */
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        /* --- LOGO --- */
+        .logo-container {
+            margin-bottom: 50px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .logo-container img {
+            max-width: 250px; /* Maksymalna szerokość logo */
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            /* Opcjonalny cień dla logo, jeśli jest przezroczyste, odkomentuj linię niżej */
+            /* filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); */
+        }
+
+        /* --- SIATKA KAFELKÓW (GRID) --- */
+        .menu-grid {
+            display: grid;
+            /* Automatyczne dopasowanie kolumn: min 280px, max rozciągnięcie */
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px; /* Maksymalna szerokość całego menu */
+        }
+
+        /* --- STYL KAFELKA (PRZYCISKU) --- */
+        .tile {
+            background-color: #ffffff;
+            text-decoration: none;
+            color: #2c3e50;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid transparent;
+        }
+
+        .tile span {
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        /* Strzałka dekoracyjna w CSS */
+        .tile::after {
+            content: '➔';
+            font-size: 1.2rem;
+            color: #bbb;
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+
+        /* --- EFEKTY NAJECHANIA (HOVER) --- */
+        .tile:hover {
+            transform: translateY(-5px); /* Uniesienie */
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
+            border-color: #e0e0e0;
+        }
+
+        .tile:hover::after {
+            color: #007bff; /* Kolor akcentu (niebieski) */
+            transform: translateX(5px);
+        }
+
+        .tile:active {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        /* --- RESPONSYWNOŚĆ DLA MAŁYCH EKRANÓW --- */
+        @media (max-width: 480px) {
+            .logo-container img {
+                max-width: 180px;
+            }
+            
+            .tile {
+                padding: 20px;
+            }
+            
+            .tile span {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="logo-container">
+        <img src="baf_logo.png" alt="BAF Logo">
+    </div>
+
+    <div class="menu-grid">
+        <a href="andrzejewski.mieczyslaw.html" class="tile">
+            <span>Andrzejewski Mieczysław</span>
+        </a>
+
+        <a href="blachno_dawid.html" class="tile">
+            <span>Błachno Dawid</span>
+        </a>
+
+        <a href="daniszewski_daniel.html" class="tile">
+            <span>Daniszewski Daniel</span>
+        </a>
+
+        <a href="karpala_joanna.html" class="tile">
+            <span>Karpała Joanna</span>
+        </a>
+
+        <a href="lekston_weronika.html" class="tile">
+            <span>Lekston Weronika</span>
+        </a>
+
+        <a href="nojek_wiktoria.html" class="tile">
+            <span>Nojek Wiktoria</span>
+        </a>
+
+        <a href="pakula_piotr.html" class="tile">
+            <span>Pakuła Piotr</span>
+        </a>
+
+        <a href="zieba_maja.html" class="tile">
+            <span>Zięba Maja</span>
+        </a>
+
+        <a href="mlynarczyk_wojciech.html" class="tile">
+            <span>Młynarczyk Wojciech</span>
+        </a>
+
+        <a href="dzidkowski_mateusz.html" class="tile">
+            <span>Dzidkowski Mateusz</span>
+        </a>
+    </div>
+
+</body>
+</html>
