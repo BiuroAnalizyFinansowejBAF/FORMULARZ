@@ -31,8 +31,8 @@
         .children-years-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin-top: 10px; }
         .child-year-input { padding: 8px !important; font-size: 0.9rem !important; }
 
-        /* Style dla radio buttonów adresu */
-        .radio-group { display: flex; gap: 20px; margin-bottom: 10px; }
+        /* Style dla radio buttonów adresu i polecenia */
+        .radio-group { display: flex; gap: 20px; margin-bottom: 10px; flex-wrap: wrap; }
         .radio-option { display: flex; align-items: center; cursor: pointer; font-size: 0.9rem; }
         .radio-option input { width: auto; margin-right: 8px; }
 
@@ -175,6 +175,22 @@
                     </div>
                     <input type="hidden" name="dzieci" id="dzieci_final">
                 </div>
+
+                <div class="form-group" style="grid-column: span 2; background-color: #f0fff4; padding: 15px; border-radius: 8px; border: 1px solid #c6f6d5;">
+                    <label style="margin-bottom: 10px;">Czy są Państwo z polecenia?</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="polecenie_status" value="tak" onchange="togglePolecenie(true)" required> Jestem z polecenia
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="polecenie_status" value="nie" onchange="togglePolecenie(false)" required> Nie jestem z polecenia
+                        </label>
+                    </div>
+                    <div id="polecenie_input_div" style="display: none; margin-top: 10px;">
+                        <input type="text" id="polecenie_osoba" placeholder="Wpisz imię i nazwisko osoby polecającej">
+                    </div>
+                    <input type="hidden" name="kontynuacja" id="kontynuacja_final">
+                </div>
                 
                 <div class="form-group" style="grid-column: span 2;"><label>Uwagi</label><textarea name="uwagi"></textarea></div>
             </div>
@@ -212,7 +228,21 @@
         }
     }
 
-    // 2. Maskowanie daty MM/RRRR
+    // 2. Obsługa pola 'Z polecenia'
+    function togglePolecenie(isReferred) {
+        const div = document.getElementById('polecenie_input_div');
+        const input = document.getElementById('polecenie_osoba');
+        if (isReferred) {
+            div.style.display = 'block';
+            input.required = true;
+        } else {
+            div.style.display = 'none';
+            input.required = false;
+            input.value = '';
+        }
+    }
+
+    // 3. Maskowanie daty MM/RRRR
     const dateInput = document.getElementById('data_zam');
     dateInput.addEventListener('input', function(e) {
         let v = this.value.replace(/\D/g, ''); 
@@ -224,7 +254,7 @@
         }
     });
 
-    // 3. Generowanie pól dla dzieci
+    // 4. Generowanie pól dla dzieci
     function generateChildInputs(count) {
         const container = document.getElementById('dzieci_lata_container');
         container.innerHTML = ''; 
@@ -242,14 +272,14 @@
         }
     }
 
-    // 4. Wysyłka formularza
+    // 5. Wysyłka formularza
     document.getElementById('bafForm').addEventListener('submit', function(e) {
         e.preventDefault();
         
+        // Logika Dzieci
         const count = document.getElementById('ile_dzieci').value;
         const yearsInputs = document.querySelectorAll('.child-year-input');
         let finalString = "";
-        
         if (count == 0) {
             finalString = "0";
         } else {
@@ -261,6 +291,18 @@
         }
         document.getElementById('dzieci_final').value = finalString;
 
+        // Logika Polecenia (mapowanie do 'kontynuacja')
+        const polecenieStatus = document.querySelector('input[name="polecenie_status"]:checked').value;
+        const polecenieInput = document.getElementById('polecenie_osoba').value;
+        let finalKontynuacja = "";
+        if (polecenieStatus === 'tak') {
+            finalKontynuacja = "Z polecenia: " + polecenieInput;
+        } else {
+            finalKontynuacja = "Nie dotyczy";
+        }
+        document.getElementById('kontynuacja_final').value = finalKontynuacja;
+
+        // Logika Adresu koresp
         const korespType = document.querySelector('input[name="koresp_type"]:checked').value;
         if (korespType === 'same') {
             document.getElementById('adres_koresp_input').value = "Taki sam jak zamieszkania";
@@ -286,6 +328,7 @@
                     form.reset(); 
                     document.getElementById('dzieci_lata_container').innerHTML = '';
                     toggleKoresp(false);
+                    togglePolecenie(false);
                 } else { throw new Error(response.error); }
                 btn.disabled = false;
             })
@@ -296,7 +339,9 @@
             });
     });
 
+    // Init
     toggleKoresp(false);
+    togglePolecenie(false);
 </script>
 </body>
 </html>
