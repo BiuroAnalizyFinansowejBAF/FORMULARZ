@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formularz Klienta BAF</title>
+    <link rel="icon" type="image/png" href="baf_logo_p.png">
+    <style>
+        :root { --primary-color: #1a365d; --accent-color: #2b6cb0; --bg-color: #f7fafc; --white: #ffffff; --text-color: #2d3748; --border-radius: 8px; }
+        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .container { background: var(--white); width: 100%; max-width: 900px; padding: 40px; border-radius: var(--border-radius); box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: relative; }
+        .logo { position: absolute; top: 30px; right: 40px; width: 120px; height: auto; }
+        header { margin-bottom: 40px; padding-right: 140px; }
+        h1 { color: var(--primary-color); font-size: 24px; margin-bottom: 10px; }
+        h2 { font-size: 16px; color: #718096; font-weight: 400; margin-top: 0; }
+        .advisor-info { display: inline-block; background-color: #ebf8ff; color: var(--accent-color); padding: 8px 12px; border-radius: 4px; font-size: 0.95em; margin-top: 10px; line-height: 1.4; }
+        .advisor-name { font-weight: 700; display: block; }
+        .advisor-title { font-weight: 400; font-size: 0.9em; opacity: 0.9; }
+        .form-section { margin-bottom: 30px; border-bottom: 1px solid #e2e8f0; padding-bottom: 20px; }
+        .form-section h3 { color: var(--primary-color); font-size: 18px; margin-bottom: 20px; border-left: 4px solid var(--accent-color); padding-left: 10px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } .logo { position: static; margin-bottom: 20px; display: block; } header { padding-right: 0; } }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 6px; font-weight: 500; font-size: 0.9rem; }
+        input[type="text"], input[type="email"], input[type="tel"], input[type="date"], input[type="number"], select, textarea { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e0; border-radius: var(--border-radius); font-size: 1rem; transition: border-color 0.3s; box-sizing: border-box; }
+        input:focus, select:focus, textarea:focus { border-color: var(--accent-color); outline: none; box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2); }
+        textarea { resize: vertical; min-height: 100px; }
+        .children-years-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin-top: 10px; }
+        .child-year-input { padding: 8px !important; font-size: 0.9rem !important; }
+        .radio-group { display: flex; gap: 20px; margin-bottom: 10px; flex-wrap: wrap; }
+        .radio-option { display: flex; align-items: center; cursor: pointer; font-size: 0.9rem; }
+        .radio-option input { width: auto; margin-right: 8px; }
+        .checkbox-container { display: flex; align-items: flex-start; margin-bottom: 20px; padding: 15px; background-color: #f8f9fa; border-radius: var(--border-radius); border: 1px solid #e2e8f0; }
+        .checkbox-container input[type="checkbox"] { margin-top: 4px; margin-right: 12px; width: 20px; height: 20px; flex-shrink: 0; cursor: pointer; }
+        .checkbox-container label { margin-bottom: 0; font-size: 0.9rem; color: var(--text-color); cursor: pointer; line-height: 1.4; }
+        
+        /* Nowoczesna odznaka bezpieczeństwa */
+        .security-badge { display: flex; align-items: center; justify-content: center; background-color: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; padding: 10px 20px; border-radius: 50px; font-size: 0.85rem; font-weight: 600; width: fit-content; margin: 0 auto 25px auto; box-shadow: 0 2px 4px rgba(0,0,0,0.03); gap: 10px; transition: transform 0.2s; }
+        .security-badge:hover { transform: translateY(-1px); box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .security-badge svg { width: 16px; height: 16px; fill: currentColor; }
+
+        .footer-copy { text-align: center; font-size: 0.8rem; color: #a0aec0; margin-top: 30px; padding-top: 20px; border-top: 1px solid #edf2f7; }
+        .legal-note { font-size: 0.75rem; color: #718096; margin-top: 15px; line-height: 1.5; text-align: justify; }
+        .legal-note a { color: var(--accent-color); text-decoration: none; }
+        .legal-note a:hover { text-decoration: underline; }
+        
+        button.submit-btn { background-color: var(--primary-color); color: white; border: none; padding: 15px 30px; font-size: 18px; border-radius: var(--border-radius); cursor: pointer; width: 100%; transition: background-color 0.3s; font-weight: bold; }
+        button.submit-btn:hover { background-color: var(--accent-color); }
+        button:disabled { background-color: #a0aec0; cursor: not-allowed; }
+        #message { display: none; margin-top: 20px; padding: 15px; border-radius: var(--border-radius); text-align: center; }
+        .success { background-color: #c6f6d5; color: #22543d; border: 1px solid #9ae6b4; }
+        .error { background-color: #fed7d7; color: #822727; border: 1px solid #feb2b2; }
+        .loading { display: none; text-align: center; margin-top: 10px; color: #666; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <img src="baf_logo.png" alt="Logo BAF" class="logo">
+
+    <header>
+        <h1>Formularz Danych Klienta</h1>
+        <h2>Proszę o dokładne uzupełnienie poniższych danych w celu przygotowania dokumentacji.</h2>
+        <div class="advisor-info">
+            <span class="advisor-name">Twój opiekun: Wojciech Młynarczyk</span>
+            <span class="advisor-title">Właściciel</span>
+        </div>
+    </header>
+
+    <form id="bafForm">
+        <input type="hidden" id="scriptUrl" value="https://script.google.com/macros/s/AKfycbx3U8N5CW4rUBoAZaG0U-mwrCbVEci0pee0m3-iNuFkV4Pivz8kZB2FqMsbybWctPRjLA/exec">
+        <input type="hidden" name="doradca" value="Wojciech Młynarczyk">
+
+        <div style="opacity: 0; position: absolute; top: 0; left: 0; height: 0; width: 0; z-index: -1;">
+            <label for="website_hp">Nie wypełniaj tego pola:</label>
+            <input type="text" id="website_hp" name="website_hp" tabindex="-1" autocomplete="off">
+        </div>
+
+        <div class="form-section">
+            <h3>Dane Osobowe i Kontaktowe</h3>
+            <div class="grid">
+                <div class="form-group"><label>Imię (imiona) i Nazwisko</label><input type="text" name="imie_nazwisko" placeholder="Jan Kowalski" required></div>
+                <div class="form-group"><label>PESEL</label><input type="text" name="pesel" pattern="\d{11}" title="11 cyfr" required></div>
+                <div class="form-group"><label>Adres e-mail</label><input type="email" name="mail" required></div>
+                <div class="form-group"><label>Numer telefonu</label><input type="tel" name="telefon" required></div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3>Dokument Tożsamości</h3>
+            <div class="grid">
+                <div class="form-group"><label>Seria i numer dowodu osobistego</label><input type="text" name="dowod" required></div>
+                <div class="form-group"><label>Data wydania</label><input type="date" name="data_wydania" required></div>
+                <div class="form-group"><label>Data ważności</label><input type="date" name="data_waznosci" required></div>
+                <div class="form-group"><label>Stan cywilny</label>
+                    <select name="stan_cywilny">
+                        <option value="żonaty/zamężna">Żonaty / Zamężna</option>
+                        <option value="kawaler/panna">Kawaler / Panna</option>
+                        <option value="rozwiedziony/a">Rozwiedziony / a</option>
+                        <option value="wdowiec/wdowa">Wdowiec / Wdowa</option>
+                    </select>
+                </div>
+                <div class="form-group"><label>Rozdzielność majątkowa?</label>
+                    <select name="rozdzielnosc"><option value="Nie">Nie</option><option value="Tak">Tak</option><option value="Nie dotyczy">Nie dotyczy</option></select>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3>Dane Firmowe i Adresowe</h3>
+            <div class="grid">
+                <div class="form-group"><label>NIP</label><input type="text" name="nip" required></div>
+                <div class="form-group"><label>Data otwarcia działalności</label><input type="date" name="data_idg" required></div>
+                <div class="form-group" style="grid-column: span 2;"><label>Adres zamieszkania (Ulica, nr domu/lokalu, kod pocztowy, miasto)</label><input type="text" name="adres_zam" required></div>
+                <div class="form-group"><label>Mieszka pod tym adresem od (mm/rrrr)</label><input type="text" name="data_zam" id="data_zam" placeholder="MM/RRRR" maxlength="7" required></div>
+                <div class="form-group"><label>Forma własności mieszkania</label>
+                    <select name="wlasnosc"><option value="Własnościowe">Własnościowe</option><option value="Wynajmowane">Wynajmowane</option><option value="Przy rodzinie">Przy rodzinie</option></select>
+                </div>
+                <div class="form-group" style="grid-column: span 2;">
+                    <label>Adres korespondencyjny</label>
+                    <div class="radio-group">
+                        <label class="radio-option"><input type="radio" name="koresp_type" value="same" checked onchange="toggleKoresp(false)"> Taki sam jak zamieszkania</label>
+                        <label class="radio-option"><input type="radio" name="koresp_type" value="other" onchange="toggleKoresp(true)"> Inny</label>
+                    </div>
+                    <div id="koresp_input_div" style="display: none;"><input type="text" name="adres_koresp" id="adres_koresp_input" placeholder="Wpisz adres korespondencyjny"></div>
+                </div>
+                <div class="form-group"><label>Liczba pracowników na UOP</label><input type="number" name="pracownicy" value="0" min="0" onfocus="if(this.value=='0') this.value=''" onblur="if(this.value=='') this.value='0'"></div>
+                <div class="form-group"><label>Obsługa klientów</label><select name="klienci"><option value="Jeden główny klient">Jeden główny klient</option><option value="Kilku klientów">Kilku klientów</option><option value="Wielu klientów (detal)">Wielu klientów (detal)</option></select></div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3>Dane Dodatkowe</h3>
+            <div class="grid">
+                <div class="form-group"><label>Miejsce urodzenia</label><input type="text" name="urodzenie" required></div>
+                <div class="form-group"><label>Nazwisko rodowe matki</label><input type="text" name="rodowe_matki" required></div>
+                <div class="form-group"><label>Imię Ojca</label><input type="text" name="imie_ojca" required></div>
+                <div class="form-group"><label>Imię Matki</label><input type="text" name="imie_matki" required></div>
+                <div class="form-group"><label>Wykształcenie</label><select name="wyksztalcenie"><option value="Podstawowe">Podstawowe</option><option value="Zawodowe">Zawodowe</option><option value="Średnie">Średnie</option><option value="Wyższe">Wyższe</option></select></div>
+                
+                <div class="form-group" style="grid-column: span 2;">
+                    <label>Ilość dzieci na utrzymaniu</label>
+                    <div style="display: flex; gap: 20px; align-items: flex-start;">
+                        <div style="width: 100px;"><input type="number" id="ile_dzieci" value="0" min="0" max="20" onfocus="if(this.value=='0') this.value=''" onblur="if(this.value=='') this.value='0'" oninput="generateChildInputs(this.value)"></div>
+                        <div style="flex-grow: 1;"><div id="dzieci_lata_container" class="children-years-container"></div></div>
+                    </div>
+                    <input type="hidden" name="dzieci" id="dzieci_final">
+                </div>
+
+                <div class="form-group" style="grid-column: span 2; background-color: #f0fff4; padding: 15px; border-radius: 8px; border: 1px solid #c6f6d5;">
+                    <label style="margin-bottom: 10px;">Czy są Państwo z polecenia?</label>
+                    <div class="radio-group">
+                        <label class="radio-option"><input type="radio" name="polecenie_status" value="tak" onchange="togglePolecenie(true)" required> Jestem z polecenia</label>
+                        <label class="radio-option"><input type="radio" name="polecenie_status" value="nie" onchange="togglePolecenie(false)" required> Nie jestem z polecenia</label>
+                    </div>
+                    <div id="polecenie_input_div" style="display: none; margin-top: 10px;">
+                        <input type="text" id="polecenie_osoba" placeholder="Wpisz imię i nazwisko osoby polecającej">
+                    </div>
+                    <input type="hidden" name="kontynuacja" id="kontynuacja_final">
+                </div>
+
+                <div class="form-group" style="grid-column: span 2;"><label>Uwagi</label><textarea name="uwagi"></textarea></div>
+            </div>
+        </div>
+
+        <div class="checkbox-container">
+            <input type="checkbox" id="privacy_policy" name="privacy_policy" required>
+            <label for="privacy_policy">Oświadczam, że zapoznałem/am się z Polityką Prywatności i akceptuję jej postanowienia. Rozumiem, że moje dane osobowe będą przetwarzane w celu przygotowania wniosku i procesowania.</label>
+        </div>
+
+        <div class="security-badge">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+            <span>Połączenie szyfrowane SSL. Twoje dane są bezpieczne.</span>
+        </div>
+
+        <button type="submit" class="submit-btn" id="btnSubmit">Wyślij Formularz</button>
+
+        <div class="legal-note">
+            Administratorem Twoich danych osobowych jest Biuro Analizy finansowej Mateusz Dzidkowski z siedzibą w Krakowie. Twoje dane wpisane w formularzu będą przetwarzane wyłącznie w celu przygotowania wniosku i procesowania (zgodnie z art. 6 ust. 1 lit. f RODO – prawnie uzasadniony interes administratora). Pełną informację o Twoich prawach (m.in. dostępu do danych, ich sprostowania czy usunięcia) znajdziesz w naszej <a href="https://biuroanalizyfinansowej.pl/polityka-prywatnosci/" target="_blank">Polityce Prywatności</a>.
+        </div>
+
+        <div class="footer-copy">
+            Biuro Analizy Finansowej 2025 © Wszelkie prawa zastrzeżone.
+        </div>
+
+        <div class="loading" id="loader">Przetwarzanie danych, proszę czekać...</div>
+        <div id="message"></div>
+    </form>
+</div>
+
+<script>
+    function toggleKoresp(isOther) { const div = document.getElementById('koresp_input_div'); const input = document.getElementById('adres_koresp_input'); if (isOther) { div.style.display = 'block'; input.required = true; input.value = ''; } else { div.style.display = 'none'; input.required = false; input.value = 'Taki sam jak zamieszkania'; } }
+    function togglePolecenie(isReferred) { const div = document.getElementById('polecenie_input_div'); const input = document.getElementById('polecenie_osoba'); if (isReferred) { div.style.display = 'block'; input.required = true; } else { div.style.display = 'none'; input.required = false; input.value = ''; } }
+    const dateInput = document.getElementById('data_zam');
+    dateInput.addEventListener('input', function(e) { let v = this.value.replace(/\D/g, ''); if (v.length > 6) v = v.slice(0, 6); if (v.length > 2) { this.value = v.slice(0, 2) + '/' + v.slice(2); } else { this.value = v; } });
+    function generateChildInputs(count) { const container = document.getElementById('dzieci_lata_container'); container.innerHTML = ''; count = parseInt(count); if (isNaN(count) || count <= 0) return; for (let i = 1; i <= count; i++) { const input = document.createElement('input'); input.type = 'number'; input.placeholder = 'Rok ur. ' + i; input.className = 'child-year-input'; input.min = '1990'; input.max = new Date().getFullYear(); container.appendChild(input); } }
+    
+    document.getElementById('bafForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (document.getElementById('website_hp').value !== "") { return; } // Honeypot
+        
+        const count = document.getElementById('ile_dzieci').value;
+        const yearsInputs = document.querySelectorAll('.child-year-input');
+        let finalString = "";
+        if (count == 0) { finalString = "0"; } else { let years = []; yearsInputs.forEach(inp => { if(inp.value) years.push(inp.value); }); finalString = count + " (" + years.join(", ") + ")"; }
+        document.getElementById('dzieci_final').value = finalString;
+
+        const polecenieStatus = document.querySelector('input[name="polecenie_status"]:checked').value;
+        const polecenieInput = document.getElementById('polecenie_osoba').value;
+        let finalKontynuacja = (polecenieStatus === 'tak') ? "Z polecenia: " + polecenieInput : "Nie dotyczy";
+        document.getElementById('kontynuacja_final').value = finalKontynuacja;
+
+        const korespType = document.querySelector('input[name="koresp_type"]:checked').value;
+        if (korespType === 'same') { document.getElementById('adres_koresp_input').value = "Taki sam jak zamieszkania"; }
+
+        const scriptURL = document.getElementById('scriptUrl').value;
+        const form = document.forms['bafForm'];
+        const btn = document.getElementById('btnSubmit');
+        const loader = document.getElementById('loader');
+        const msg = document.getElementById('message');
+        if (scriptURL.includes("TUTAJ_WKLEJ")) { alert("Błąd konfiguracji URL"); return; }
+        btn.disabled = true; loader.style.display = 'block'; msg.style.display = 'none';
+        fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+            .then(response => response.json())
+            .then(response => {
+                loader.style.display = 'none'; msg.style.display = 'block';
+                if (response.result === 'success') { msg.className = 'success'; msg.innerHTML = '<strong>Sukces!</strong> Formularz został poprawnie uzupełniony i przesłany. Dziękujemy.'; form.reset(); document.getElementById('dzieci_lata_container').innerHTML = ''; toggleKoresp(false); togglePolecenie(false); } 
+                else { throw new Error(response.error); }
+                btn.disabled = false;
+            })
+            .catch(error => { loader.style.display = 'none'; msg.style.display = 'block'; msg.className = 'error'; msg.innerHTML = 'Wystąpił błąd: ' + error.message; btn.disabled = false; });
+    });
+    toggleKoresp(false);
+    togglePolecenie(false);
+</script>
+</body>
+</html>
