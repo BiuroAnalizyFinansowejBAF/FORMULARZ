@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formularz Zobowiązań BAF</title>
+    <link rel="icon" type="image/png" href="baf_logo_p.png">
+    <style>
+        :root { --primary-color: #1a365d; --accent-color: #2b6cb0; --bg-color: #f7fafc; --white: #ffffff; --text-color: #2d3748; --border-radius: 8px; --remove-color: #e53e3e; }
+        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .container { background: var(--white); width: 100%; max-width: 950px; padding: 40px; border-radius: var(--border-radius); box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: relative; }
+        
+        .logo-link { position: absolute; top: 30px; right: 40px; display: block; transition: transform 0.2s; }
+        .logo-link:hover { transform: scale(1.05); }
+        .logo { width: 120px; height: auto; display: block; }
+
+        header { margin-bottom: 40px; padding-right: 140px; }
+        h1 { color: var(--primary-color); font-size: 24px; margin-bottom: 10px; }
+        h2 { font-size: 16px; color: #718096; font-weight: 400; margin-top: 0; }
+        
+        .advisor-info { display: inline-block; background-color: #ebf8ff; color: var(--accent-color); padding: 8px 12px; border-radius: 4px; font-size: 0.95em; margin-top: 10px; }
+        .advisor-name { font-weight: 700; display: block; }
+
+        .form-section { margin-bottom: 30px; border-bottom: 1px solid #e2e8f0; padding-bottom: 20px; }
+        .form-section h3 { color: var(--primary-color); font-size: 18px; margin-bottom: 20px; border-left: 4px solid var(--accent-color); padding-left: 10px; display: flex; justify-content: space-between; align-items: center; }
+        
+        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        
+        @media (max-width: 768px) { 
+            .grid, .grid-3 { grid-template-columns: 1fr; } 
+            .logo-link { position: static; margin-bottom: 20px; display: inline-block; }
+            header { padding-right: 0; } 
+        }
+
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 6px; font-weight: 500; font-size: 0.85rem; color: #4a5568; }
+        input[type="text"], input[type="number"], input[type="date"], select { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e0; border-radius: var(--border-radius); font-size: 0.95rem; transition: border-color 0.3s; box-sizing: border-box; }
+        input:focus, select:focus { border-color: var(--accent-color); outline: none; box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2); }
+
+        /* Style dla dynamicznych wierszy */
+        .dynamic-row { background-color: #f8fafc; border: 1px solid #e2e8f0; padding: 20px; border-radius: var(--border-radius); margin-bottom: 20px; position: relative; transition: all 0.3s; }
+        .dynamic-row:hover { border-color: #bee3f8; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .row-header { font-weight: 700; color: var(--accent-color); margin-bottom: 15px; font-size: 0.9rem; display: flex; justify-content: space-between; }
+        
+        .add-btn { background-color: transparent; border: 2px dashed var(--accent-color); color: var(--accent-color); padding: 12px; width: 100%; border-radius: var(--border-radius); font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .add-btn:hover { background-color: #ebf8ff; }
+        .add-btn:disabled { border-color: #cbd5e0; color: #a0aec0; cursor: not-allowed; background: #f7fafc; }
+
+        /* Loading & Button styles from original */
+        .submit-btn { background-color: var(--primary-color); color: white; border: none; padding: 15px 30px; font-size: 18px; border-radius: var(--border-radius); cursor: pointer; width: 100%; transition: background-color 0.3s; font-weight: bold; margin-top: 20px; }
+        .submit-btn:hover { background-color: var(--accent-color); }
+        .loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.95); z-index: 9999; justify-content: center; align-items: center; flex-direction: column; }
+        .spinner { width: 60px; height: 60px; border: 6px solid #e2e8f0; border-top: 6px solid var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 25px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        #message { display: none; margin-top: 20px; padding: 15px; border-radius: var(--border-radius); text-align: center; }
+        .success { background-color: #c6f6d5; color: #22543d; border: 1px solid #9ae6b4; }
+        .error { background-color: #fed7d7; color: #822727; border: 1px solid #feb2b2; }
+
+        .security-badge { display: flex; align-items: center; justify-content: center; background-color: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; padding: 8px 15px; border-radius: 50px; font-size: 0.8rem; margin: 20px auto; width: fit-content; gap: 8px; }
+        .security-badge svg { width: 14px; height: 14px; fill: currentColor; }
+    </style>
+</head>
+<body>
+
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="spinner"></div>
+    <div class="loading-title">Trwa przesyłanie danych...</div>
+    <p>Proszę nie zamykać okna.</p>
+</div>
+
+<div class="container">
+    <a href="https://biuroanalizyfinansowej.pl/" target="_blank" class="logo-link">
+        <img src="baf_logo.png" alt="Logo BAF" class="logo">
+    </a>
+
+    <header>
+        <h1>Formularz Zobowiązań Kredytowych</h1>
+        <h2>Uzupełnij dane dotyczące aktualnych zobowiązań finansowych.</h2>
+        <div class="advisor-info">
+            <span class="advisor-name">Opiekun: Weronika Lekston</span>
+        </div>
+    </header>
+
+    <form id="bafDebtForm">
+        <input type="hidden" id="scriptUrl" value="TUTAJ_WKLEJ_URL_SWOJEGO_SKRYPTU_GOOGLE">
+        <input type="hidden" name="doradca" value="Weronika Lekston">
+
+        <div style="opacity: 0; position: absolute; top: 0; left: 0; height: 0; width: 0; z-index: -1;">
+            <input type="text" id="website_hp" name="website_hp" tabindex="-1" autocomplete="off">
+        </div>
+
+        <div class="form-section">
+            <h3>Dane Identyfikacyjne</h3>
+            <div class="grid">
+                <div class="form-group"><label>Imię i Nazwisko Klienta</label><input type="text" name="imie_nazwisko" required placeholder="np. Jan Kowalski"></div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3>Kredyty (Hipoteczne / Gotówkowe / Firmowe)</h3>
+            <div id="loans_container"></div>
+            <button type="button" class="add-btn" id="btn_add_loan" onclick="addLoan()">
+                <span>+ Dodaj kolejny kredyt</span>
+            </button>
+        </div>
+
+        <div class="form-section">
+            <h3>Karty Kredytowe</h3>
+            <div id="cards_container"></div>
+            <button type="button" class="add-btn" id="btn_add_card" onclick="addCard()">
+                <span>+ Dodaj kolejną kartę kredytową</span>
+            </button>
+        </div>
+
+        <div class="form-section">
+            <h3>Limity w rachunku (Debet)</h3>
+            <div id="limits_container"></div>
+            <button type="button" class="add-btn" id="btn_add_limit" onclick="addLimit()">
+                <span>+ Dodaj kolejny limit</span>
+            </button>
+        </div>
+
+        <div class="form-section">
+            <h3>Inne Zobowiązania</h3>
+            <div class="form-group">
+                <label>Inne stałe zobowiązania miesięczne (np. alimenty)</label>
+                <input type="text" name="alimenty" placeholder="Wpisz rodzaj i kwotę, np. Alimenty 500 PLN">
+            </div>
+        </div>
+
+        <div class="security-badge">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+            <span>Połączenie szyfrowane SSL. Twoje dane są bezpieczne.</span>
+        </div>
+
+        <button type="submit" class="submit-btn" id="btnSubmit">Wyślij Zestawienie</button>
+        <div id="message"></div>
+    </form>
+</div>
+
+<script>
+    // --- LOGIKA DYNAMICZNYCH PÓL ---
+    
+    let loanCount = 0;
+    let cardCount = 0;
+    let limitCount = 0;
+
+    const MAX_LOANS = 10;
+    const MAX_CARDS = 5;
+    const MAX_LIMITS = 5;
+
+    // Funkcja dodająca KREDYT
+    function addLoan() {
+        if (loanCount >= MAX_LOANS) return;
+        loanCount++;
+        const container = document.getElementById('loans_container');
+        const div = document.createElement('div');
+        div.className = 'dynamic-row';
+        div.innerHTML = `
+            <div class="row-header">Kredyt nr ${loanCount}</div>
+            <div class="grid-3">
+                <div class="form-group"><label>W jakim banku</label><input type="text" name="bank${loanCount}"></div>
+                <div class="form-group"><label>Kwota udzielonego kredytu</label><input type="number" step="0.01" name="kwota${loanCount}"></div>
+                <div class="form-group"><label>Waluta kredytu</label>
+                    <select name="waluta${loanCount}">
+                        <option value="PLN">PLN</option>
+                        <option value="EUR">EUR</option>
+                        <option value="USD">USD</option>
+                        <option value="CHF">CHF</option>
+                    </select>
+                </div>
+                <div class="form-group"><label>Data podpisania umowy</label><input type="date" name="data${loanCount}"></div>
+                <div class="form-group"><label>Data końca umowy</label><input type="date" name="koniec${loanCount}"></div>
+                <div class="form-group"><label>Bieżące saldo (ile zostało)</label><input type="number" step="0.01" name="saldo${loanCount}"></div>
+                <div class="form-group"><label>Bieżąca rata</label><input type="number" step="0.01" name="rata${loanCount}"></div>
+            </div>
+        `;
+        container.appendChild(div);
+        updateButtons();
+    }
+
+    // Funkcja dodająca KARTĘ KREDYTOWĄ
+    function addCard() {
+        if (cardCount >= MAX_CARDS) return;
+        cardCount++;
+        const container = document.getElementById('cards_container');
+        const div = document.createElement('div');
+        div.className = 'dynamic-row';
+        div.innerHTML = `
+            <div class="row-header">Karta Kredytowa nr ${cardCount}</div>
+            <div class="grid">
+                <div class="form-group"><label>W jakim banku</label><input type="text" name="karta${cardCount}"></div>
+                <div class="form-group"><label>Kwota przyznanego limitu</label><input type="number" step="0.01" name="kwotakk${cardCount}"></div>
+                <div class="form-group"><label>Data podpisania umowy</label><input type="date" name="datakk${cardCount}"></div>
+                <div class="form-group"><label>Bieżące saldo (wykorzystanie)</label><input type="number" step="0.01" name="saldokk${cardCount}"></div>
+            </div>
+        `;
+        container.appendChild(div);
+        updateButtons();
+    }
+
+    // Funkcja dodająca LIMIT W KONCIE
+    function addLimit() {
+        if (limitCount >= MAX_LIMITS) return;
+        limitCount++;
+        const container = document.getElementById('limits_container');
+        const div = document.createElement('div');
+        div.className = 'dynamic-row';
+        div.innerHTML = `
+            <div class="row-header">Limit w koncie nr ${limitCount}</div>
+            <div class="grid">
+                <div class="form-group"><label>W jakim banku</label><input type="text" name="limit${limitCount}"></div>
+                <div class="form-group"><label>Kwota przyznanego limitu</label><input type="number" step="0.01" name="kwotalimit${limitCount}"></div>
+                <div class="form-group"><label>Data podpisania umowy</label><input type="date" name="datalimit${limitCount}"></div>
+                <div class="form-group"><label>Bieżące saldo (wykorzystanie)</label><input type="number" step="0.01" name="saldolimit${limitCount}"></div>
+            </div>
+        `;
+        container.appendChild(div);
+        updateButtons();
+    }
+
+    function updateButtons() {
+        const btnLoan = document.getElementById('btn_add_loan');
+        const btnCard = document.getElementById('btn_add_card');
+        const btnLimit = document.getElementById('btn_add_limit');
+
+        if (loanCount >= MAX_LOANS) { btnLoan.disabled = true; btnLoan.innerHTML = "Osiągnięto limit (10)"; }
+        if (cardCount >= MAX_CARDS) { btnCard.disabled = true; btnCard.innerHTML = "Osiągnięto limit (5)"; }
+        if (limitCount >= MAX_LIMITS) { btnLimit.disabled = true; btnLimit.innerHTML = "Osiągnięto limit (5)"; }
+    }
+
+    // Inicjalizacja (dodaj po jednym pustym wierszu na start)
+    document.addEventListener('DOMContentLoaded', function() {
+        addLoan();
+        addCard();
+        addLimit();
+    });
+
+    // --- WYSYŁKA ---
+    document.getElementById('bafDebtForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        if (document.getElementById('website_hp').value !== "") { return; } // Honeypot check
+
+        const btn = document.getElementById('btnSubmit');
+        const overlay = document.getElementById('loadingOverlay');
+        const msg = document.getElementById('message');
+        const scriptURL = document.getElementById('scriptUrl').value;
+
+        // Sprawdź konfigurację URL
+        if (scriptURL.includes("TUTAJ_WKLEJ") || scriptURL === "") {
+            alert("Błąd: Nie skonfigurowano adresu skryptu Google (Web App URL).");
+            return;
+        }
+
+        btn.disabled = true;
+        overlay.style.display = 'flex';
+        msg.style.display = 'none';
+
+        try {
+            // Zbieranie danych
+            const formData = new FormData(document.forms['bafDebtForm']);
+            const dataObject = {};
+            formData.forEach((value, key) => dataObject[key] = value);
+
+            // Wysyłka
+            const response = await fetch(scriptURL, {
+                method: 'POST',
+                body: JSON.stringify(dataObject) // W tym formularzu wysyłamy czysty JSON bez plików
+            });
+
+            const result = await response.json();
+
+            overlay.style.display = 'none';
+            msg.style.display = 'block';
+
+            if (result.result === 'success') {
+                msg.className = 'success';
+                msg.innerHTML = `<strong>Sukces!</strong> Zobowiązania zostały przesłane. <br> <a href="${result.link}" target="_blank">Zobacz utworzony plik</a>`;
+                // Opcjonalnie reset: document.forms['bafDebtForm'].reset();
+            } else {
+                throw new Error(result.error || "Nieznany błąd serwera.");
+            }
+        } catch (error) {
+            overlay.style.display = 'none';
+            msg.style.display = 'block';
+            msg.className = 'error';
+            msg.innerHTML = 'Wystąpił błąd: ' + error.message;
+            btn.disabled = false;
+        }
+    });
+</script>
+
+</body>
+</html>
