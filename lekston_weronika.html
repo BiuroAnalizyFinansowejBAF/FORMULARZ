@@ -19,7 +19,7 @@
         h1 { color: var(--primary-color); font-size: 24px; margin-bottom: 10px; }
         h2 { font-size: 16px; color: #718096; font-weight: 400; margin-top: 0; }
         
-        /* Link do wizytówki doradcy */
+        /* Link do wizytówki */
         .advisor-info { display: inline-block; background-color: #ebf8ff; color: var(--accent-color); padding: 8px 12px; border-radius: 4px; font-size: 0.95em; margin-top: 10px; line-height: 1.4; transition: background-color 0.2s; }
         .advisor-info:hover { background-color: #bee3f8; }
         .advisor-link { text-decoration: none; color: inherit; display: block; cursor: pointer; }
@@ -47,15 +47,65 @@
         .checkbox-container { display: flex; align-items: flex-start; margin-bottom: 20px; padding: 15px; background-color: #f8f9fa; border-radius: var(--border-radius); border: 1px solid #e2e8f0; }
         .checkbox-container input[type="checkbox"] { margin-top: 4px; margin-right: 12px; width: 20px; height: 20px; flex-shrink: 0; cursor: pointer; }
         .checkbox-container label { margin-bottom: 0; font-size: 0.9rem; color: var(--text-color); cursor: pointer; line-height: 1.4; }
-        input[type="file"] { border: 1px dashed #cbd5e0; padding: 20px; background: #f8fafc; cursor: pointer; }
-        input[type="file"]:hover { background: #edf2f7; border-color: var(--accent-color); }
-        .file-hint { font-size: 0.8rem; color: #718096; margin-top: 5px; }
+        
+        /* STYLIZACJA ZAAWANSOWANEGO UPLOADU */
+        .file-upload-wrapper {
+            border: 2px dashed #cbd5e0;
+            padding: 20px;
+            background: #f8fafc;
+            text-align: center;
+            border-radius: var(--border-radius);
+            transition: all 0.3s;
+        }
+        .file-upload-wrapper:hover { border-color: var(--accent-color); background: #edf2f7; }
+        input[type="file"] { display: none; } /* Ukrywamy domyślny input */
+        .custom-file-upload {
+            display: inline-block;
+            padding: 10px 20px;
+            cursor: pointer;
+            background: white;
+            border: 1px solid #cbd5e0;
+            border-radius: 4px;
+            font-weight: 600;
+            color: var(--primary-color);
+            transition: 0.3s;
+        }
+        .custom-file-upload:hover { background-color: #ebf8ff; border-color: var(--accent-color); }
+        
+        .file-list { list-style: none; padding: 0; margin-top: 15px; text-align: left; }
+        .file-item {
+            background: white;
+            border: 1px solid #e2e8f0;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .file-item-name { font-weight: 500; color: #2d3748; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 80%; }
+        .remove-file-btn {
+            background: transparent;
+            color: #e53e3e;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 0 5px;
+            transition: color 0.2s;
+        }
+        .remove-file-btn:hover { color: #c53030; transform: scale(1.1); }
 
+        .file-hint { font-size: 0.8rem; color: #718096; margin-top: 10px; }
+        .email-hint { font-size: 0.85rem; color: #4a5568; margin-top: 10px; font-style: italic; background: #fffaf0; padding: 8px; border-radius: 4px; border-left: 3px solid #ed8936; }
+
+        /* Security Badge */
         .security-badge { display: flex; align-items: center; justify-content: center; background-color: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; padding: 10px 20px; border-radius: 50px; font-size: 0.85rem; font-weight: 600; width: fit-content; margin: 0 auto 25px auto; box-shadow: 0 2px 4px rgba(0,0,0,0.03); gap: 10px; transition: transform 0.2s; }
         .security-badge:hover { transform: translateY(-1px); box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         .security-badge svg { width: 16px; height: 16px; fill: currentColor; }
 
-        /* Sekcja stopki firmowej */
+        /* Stopka */
         .company-stamp { text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0; color: #4a5568; font-size: 0.9rem; line-height: 1.6; }
         .company-name { font-weight: 700; color: var(--primary-color); text-transform: uppercase; letter-spacing: 0.5px; }
         .company-website { margin-top: 8px; display: inline-block; }
@@ -189,9 +239,20 @@
 
                 <div class="form-group" style="grid-column: span 2;">
                     <h3>Załączniki (Opcjonalnie)</h3>
-                    <label>Dodaj dokumenty (PIT, KPiR, wyciągi itp.)</label>
-                    <input type="file" id="file_upload" name="files" multiple>
-                    <div class="file-hint">Maksymalnie 5 plików, każdy do 5MB.</div>
+                    <div class="file-upload-wrapper">
+                        <label for="file_upload" class="custom-file-upload">
+                            + Dodaj pliki (max 10)
+                        </label>
+                        <input type="file" id="file_upload" multiple>
+                        
+                        <ul id="fileList" class="file-list"></ul>
+                        
+                        <div class="file-hint">Max 5MB na plik. Akceptujemy PDF, JPG, PNG, DOC.</div>
+                        <div class="email-hint">
+                            Jeśli chcesz wysłać więcej załączników proszę o wysłanie na mój adres mailowy: 
+                            <strong>weronika.lekston@kancelaria-af.com</strong>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="form-group" style="grid-column: span 2;"><label>Uwagi</label><textarea name="uwagi"></textarea></div>
@@ -227,18 +288,67 @@
             Biuro Analizy Finansowej 2025 © Wszelkie prawa zastrzeżone.
         </div>
 
-        <div class="loading" id="loader">Przetwarzanie danych i wysyłanie plików, proszę czekać...</div>
+        <div class="loading" id="loader">Trwa bezpieczne wysyłanie danych i załączników...</div>
         <div id="message"></div>
     </form>
 </div>
 
 <script>
+    // Logika interfejsu
     function toggleKoresp(isOther) { const div = document.getElementById('koresp_input_div'); const input = document.getElementById('adres_koresp_input'); if (isOther) { div.style.display = 'block'; input.required = true; input.value = ''; } else { div.style.display = 'none'; input.required = false; input.value = 'Taki sam jak zamieszkania'; } }
     function togglePolecenie(isReferred) { const div = document.getElementById('polecenie_input_div'); const input = document.getElementById('polecenie_osoba'); if (isReferred) { div.style.display = 'block'; input.required = true; } else { div.style.display = 'none'; input.required = false; input.value = ''; } }
+    
+    // Daty
     const dateInput = document.getElementById('data_zam');
     dateInput.addEventListener('input', function(e) { let v = this.value.replace(/\D/g, ''); if (v.length > 6) v = v.slice(0, 6); if (v.length > 2) { this.value = v.slice(0, 2) + '/' + v.slice(2); } else { this.value = v; } });
-    function generateChildInputs(count) { const container = document.getElementById('dzieci_lata_container'); container.innerHTML = ''; count = parseInt(count); if (isNaN(count) || count <= 0) return; for (let i = 1; i <= count; i++) { const input = document.createElement('input'); input.type = 'number'; input.placeholder = 'Rok ur. ' + i; input.className = 'child-year-input'; input.min = '1990'; input.max = new Date().getFullYear(); container.appendChild(input); } }
     
+    // Dzieci
+    function generateChildInputs(count) { const container = document.getElementById('dzieci_lata_container'); container.innerHTML = ''; count = parseInt(count); if (isNaN(count) || count <= 0) return; for (let i = 1; i <= count; i++) { const input = document.createElement('input'); input.type = 'number'; input.placeholder = 'Rok ur. ' + i; input.className = 'child-year-input'; input.min = '1990'; input.max = new Date().getFullYear(); container.appendChild(input); } }
+
+    // --- ZAAWANSOWANA OBSŁUGA PLIKÓW ---
+    let accumulatedFiles = []; // Tu trzymamy pliki do wysyłki
+    const fileInput = document.getElementById('file_upload');
+    const fileList = document.getElementById('fileList');
+
+    fileInput.addEventListener('change', function(e) {
+        const newFiles = Array.from(this.files);
+        if (accumulatedFiles.length + newFiles.length > 10) {
+            alert("Możesz dodać maksymalnie 10 plików.");
+            return;
+        }
+        
+        newFiles.forEach(file => {
+            if (file.size > 5 * 1024 * 1024) {
+                alert(`Plik ${file.name} jest za duży (max 5MB).`);
+                return;
+            }
+            // Sprawdź czy duplikat
+            if(!accumulatedFiles.some(f => f.name === file.name && f.size === file.size)) {
+                accumulatedFiles.push(file);
+            }
+        });
+        renderFileList();
+        this.value = ''; // Reset inputa, żeby można było dodać ten sam plik ponownie po usunięciu
+    });
+
+    function renderFileList() {
+        fileList.innerHTML = '';
+        accumulatedFiles.forEach((file, index) => {
+            const li = document.createElement('li');
+            li.className = 'file-item';
+            li.innerHTML = `
+                <span class="file-item-name">${file.name}</span>
+                <button type="button" class="remove-file-btn" onclick="removeFile(${index})" title="Usuń plik">✕</button>
+            `;
+            fileList.appendChild(li);
+        });
+    }
+
+    window.removeFile = function(index) {
+        accumulatedFiles.splice(index, 1);
+        renderFileList();
+    }
+
     const getBase64 = (file) => {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -248,6 +358,7 @@
         });
     };
 
+    // --- WYSYŁKA ---
     document.getElementById('bafForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         if (document.getElementById('website_hp').value !== "") { return; } 
@@ -259,6 +370,7 @@
         
         if (scriptURL.includes("TUTAJ_WKLEJ")) { alert("Błąd konfiguracji URL"); return; }
 
+        // Przygotowanie danych tekstowych
         const count = document.getElementById('ile_dzieci').value;
         const yearsInputs = document.querySelectorAll('.child-year-input');
         let finalString = "";
@@ -279,28 +391,34 @@
             const formDataObj = {};
             const formData = new FormData(document.forms['bafForm']);
             formData.forEach((value, key) => { if (key !== 'files') formDataObj[key] = value; });
+            
+            // Dodajemy doradcę "sztywno" do obiektu, na wszelki wypadek
+            formDataObj['doradca'] = document.querySelector('input[name="doradca"]').value;
 
-            const fileInput = document.getElementById('file_upload');
+            // Przetwarzanie plików z tablicy accumulatedFiles
             let filesData = [];
-            if (fileInput.files.length > 0) {
-                if (fileInput.files.length > 5) throw new Error("Za dużo plików. Maksymalnie 5.");
-                filesData = await Promise.all([...fileInput.files].map(file => {
-                    if (file.size > 5 * 1024 * 1024) throw new Error(`Plik ${file.name} jest za duży (max 5MB).`);
-                    return getBase64(file);
-                }));
+            if (accumulatedFiles.length > 0) {
+                filesData = await Promise.all(accumulatedFiles.map(file => getBase64(file)));
             }
 
             const payload = { formData: formDataObj, files: filesData };
-            const response = await fetch(scriptURL, { method: 'POST', body: JSON.stringify(payload) });
+            
+            const response = await fetch(scriptURL, { 
+                method: 'POST', 
+                body: JSON.stringify(payload) 
+            });
+            
             const result = await response.json();
 
             loader.style.display = 'none'; msg.style.display = 'block';
 
             if (result.result === 'success') {
                 msg.className = 'success'; 
-                msg.innerHTML = '<strong>Sukces!</strong> Formularz i pliki zostały przesłane. Dziękujemy.'; 
+                msg.innerHTML = '<strong>Sukces!</strong> Formularz i załączniki zostały przesłane. Dziękujemy.'; 
                 document.forms['bafForm'].reset(); 
                 document.getElementById('dzieci_lata_container').innerHTML = ''; 
+                accumulatedFiles = []; // Czyścimy listę plików
+                renderFileList();
                 toggleKoresp(false); togglePolecenie(false); 
             } else {
                 throw new Error(result.error || "Nieznany błąd serwera.");
