@@ -10,7 +10,6 @@
         body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; display: flex; justify-content: center; }
         .container { background: var(--white); width: 100%; max-width: 900px; padding: 40px; border-radius: var(--border-radius); box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: relative; }
         
-        /* Logo klikalne */
         .logo-link { position: absolute; top: 30px; right: 40px; display: block; transition: transform 0.2s; }
         .logo-link:hover { transform: scale(1.05); }
         .logo { width: 120px; height: auto; display: block; }
@@ -19,7 +18,6 @@
         h1 { color: var(--primary-color); font-size: 24px; margin-bottom: 10px; }
         h2 { font-size: 16px; color: #718096; font-weight: 400; margin-top: 0; }
         
-        /* Link do wizytówki */
         .advisor-info { display: inline-block; background-color: #ebf8ff; color: var(--accent-color); padding: 8px 12px; border-radius: 4px; font-size: 0.95em; margin-top: 10px; line-height: 1.4; transition: background-color 0.2s; }
         .advisor-info:hover { background-color: #bee3f8; }
         .advisor-link { text-decoration: none; color: inherit; display: block; cursor: pointer; }
@@ -48,64 +46,53 @@
         .checkbox-container input[type="checkbox"] { margin-top: 4px; margin-right: 12px; width: 20px; height: 20px; flex-shrink: 0; cursor: pointer; }
         .checkbox-container label { margin-bottom: 0; font-size: 0.9rem; color: var(--text-color); cursor: pointer; line-height: 1.4; }
         
-        /* STYLIZACJA ZAAWANSOWANEGO UPLOADU */
-        .file-upload-wrapper {
-            border: 2px dashed #cbd5e0;
-            padding: 20px;
-            background: #f8fafc;
-            text-align: center;
-            border-radius: var(--border-radius);
-            transition: all 0.3s;
-        }
+        /* UPLOAD PLIKÓW */
+        .file-upload-wrapper { border: 2px dashed #cbd5e0; padding: 20px; background: #f8fafc; text-align: center; border-radius: var(--border-radius); transition: all 0.3s; }
         .file-upload-wrapper:hover { border-color: var(--accent-color); background: #edf2f7; }
-        input[type="file"] { display: none; } /* Ukrywamy domyślny input */
-        .custom-file-upload {
-            display: inline-block;
-            padding: 10px 20px;
-            cursor: pointer;
-            background: white;
-            border: 1px solid #cbd5e0;
-            border-radius: 4px;
-            font-weight: 600;
-            color: var(--primary-color);
-            transition: 0.3s;
-        }
+        input[type="file"] { display: none; } 
+        .custom-file-upload { display: inline-block; padding: 10px 20px; cursor: pointer; background: white; border: 1px solid #cbd5e0; border-radius: 4px; font-weight: 600; color: var(--primary-color); transition: 0.3s; }
         .custom-file-upload:hover { background-color: #ebf8ff; border-color: var(--accent-color); }
-        
         .file-list { list-style: none; padding: 0; margin-top: 15px; text-align: left; }
-        .file-item {
-            background: white;
-            border: 1px solid #e2e8f0;
-            padding: 8px 12px;
-            margin-bottom: 8px;
-            border-radius: 4px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.9rem;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-        }
+        .file-item { background: white; border: 1px solid #e2e8f0; padding: 8px 12px; margin-bottom: 8px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
         .file-item-name { font-weight: 500; color: #2d3748; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 80%; }
-        .remove-file-btn {
-            background: transparent;
-            color: #e53e3e;
-            border: none;
-            cursor: pointer;
-            font-size: 1.1rem;
-            padding: 0 5px;
-            transition: color 0.2s;
-        }
+        .remove-file-btn { background: transparent; color: #e53e3e; border: none; cursor: pointer; font-size: 1.1rem; padding: 0 5px; transition: color 0.2s; }
         .remove-file-btn:hover { color: #c53030; transform: scale(1.1); }
-
         .file-hint { font-size: 0.8rem; color: #718096; margin-top: 10px; }
         .email-hint { font-size: 0.85rem; color: #4a5568; margin-top: 10px; font-style: italic; background: #fffaf0; padding: 8px; border-radius: 4px; border-left: 3px solid #ed8936; }
 
-        /* Security Badge */
+        /* STYL POPUPU ŁADOWANIA */
+        .loading-overlay {
+            display: none; /* Ukryty domyślnie */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+            padding: 20px;
+        }
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 6px solid #e2e8f0;
+            border-top: 6px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 25px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .loading-title { font-size: 1.5rem; color: var(--primary-color); font-weight: bold; margin-bottom: 10px; }
+        .loading-subtitle { font-size: 1rem; color: #4a5568; max-width: 500px; line-height: 1.5; }
+
         .security-badge { display: flex; align-items: center; justify-content: center; background-color: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; padding: 10px 20px; border-radius: 50px; font-size: 0.85rem; font-weight: 600; width: fit-content; margin: 0 auto 25px auto; box-shadow: 0 2px 4px rgba(0,0,0,0.03); gap: 10px; transition: transform 0.2s; }
         .security-badge:hover { transform: translateY(-1px); box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         .security-badge svg { width: 16px; height: 16px; fill: currentColor; }
 
-        /* Stopka */
         .company-stamp { text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0; color: #4a5568; font-size: 0.9rem; line-height: 1.6; }
         .company-name { font-weight: 700; color: var(--primary-color); text-transform: uppercase; letter-spacing: 0.5px; }
         .company-website { margin-top: 8px; display: inline-block; }
@@ -120,13 +107,19 @@
         button.submit-btn { background-color: var(--primary-color); color: white; border: none; padding: 15px 30px; font-size: 18px; border-radius: var(--border-radius); cursor: pointer; width: 100%; transition: background-color 0.3s; font-weight: bold; }
         button.submit-btn:hover { background-color: var(--accent-color); }
         button:disabled { background-color: #a0aec0; cursor: not-allowed; }
+        
         #message { display: none; margin-top: 20px; padding: 15px; border-radius: var(--border-radius); text-align: center; }
         .success { background-color: #c6f6d5; color: #22543d; border: 1px solid #9ae6b4; }
         .error { background-color: #fed7d7; color: #822727; border: 1px solid #feb2b2; }
-        .loading { display: none; text-align: center; margin-top: 10px; color: #666; }
     </style>
 </head>
 <body>
+
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="spinner"></div>
+    <div class="loading-title">Trwa bezpieczne wysyłanie danych...</div>
+    <div class="loading-subtitle">Prosimy o chwilę cierpliwości. Proces może potrwać od 15 do 60 sekund w zależności od wielkości załączników. Nie zamykaj tej karty.</div>
+</div>
 
 <div class="container">
     <a href="https://biuroanalizyfinansowej.pl/" target="_blank" class="logo-link" title="Przejdź na stronę główną">
@@ -241,7 +234,7 @@
                     <h3>Załączniki (Opcjonalnie)</h3>
                     <div class="file-upload-wrapper">
                         <label for="file_upload" class="custom-file-upload">
-                            + Dodaj pliki (max 10)
+                            + Wybierz pliki (max 10)
                         </label>
                         <input type="file" id="file_upload" multiple>
                         
@@ -288,7 +281,6 @@
             Biuro Analizy Finansowej 2025 © Wszelkie prawa zastrzeżone.
         </div>
 
-        <div class="loading" id="loader">Trwa bezpieczne wysyłanie danych i załączników...</div>
         <div id="message"></div>
     </form>
 </div>
@@ -328,7 +320,7 @@
             }
         });
         renderFileList();
-        this.value = ''; // Reset inputa, żeby można było dodać ten sam plik ponownie po usunięciu
+        this.value = ''; // Reset inputa
     });
 
     function renderFileList() {
@@ -361,10 +353,10 @@
     // --- WYSYŁKA ---
     document.getElementById('bafForm').addEventListener('submit', async function(e) {
         e.preventDefault();
-        if (document.getElementById('website_hp').value !== "") { return; } 
+        if (document.getElementById('website_hp').value !== "") { return; } // Honeypot
         
         const btn = document.getElementById('btnSubmit');
-        const loader = document.getElementById('loader');
+        const overlay = document.getElementById('loadingOverlay'); // POPUP
         const msg = document.getElementById('message');
         const scriptURL = document.getElementById('scriptUrl').value;
         
@@ -385,17 +377,18 @@
         const korespType = document.querySelector('input[name="koresp_type"]:checked').value;
         if (korespType === 'same') { document.getElementById('adres_koresp_input').value = "Taki sam jak zamieszkania"; }
 
-        btn.disabled = true; loader.style.display = 'block'; msg.style.display = 'none';
+        // UI: POKAŻ POPUP
+        btn.disabled = true; 
+        overlay.style.display = 'flex'; // Pokaż overlay (flex centruje)
+        msg.style.display = 'none';
 
         try {
             const formDataObj = {};
             const formData = new FormData(document.forms['bafForm']);
             formData.forEach((value, key) => { if (key !== 'files') formDataObj[key] = value; });
             
-            // Dodajemy doradcę "sztywno" do obiektu, na wszelki wypadek
             formDataObj['doradca'] = document.querySelector('input[name="doradca"]').value;
 
-            // Przetwarzanie plików z tablicy accumulatedFiles
             let filesData = [];
             if (accumulatedFiles.length > 0) {
                 filesData = await Promise.all(accumulatedFiles.map(file => getBase64(file)));
@@ -410,23 +403,29 @@
             
             const result = await response.json();
 
-            loader.style.display = 'none'; msg.style.display = 'block';
+            // UI: UKRYJ POPUP
+            overlay.style.display = 'none'; 
+            msg.style.display = 'block';
 
             if (result.result === 'success') {
                 msg.className = 'success'; 
                 msg.innerHTML = '<strong>Sukces!</strong> Formularz i załączniki zostały przesłane. Dziękujemy.'; 
                 document.forms['bafForm'].reset(); 
                 document.getElementById('dzieci_lata_container').innerHTML = ''; 
-                accumulatedFiles = []; // Czyścimy listę plików
+                accumulatedFiles = []; 
                 renderFileList();
                 toggleKoresp(false); togglePolecenie(false); 
             } else {
                 throw new Error(result.error || "Nieznany błąd serwera.");
             }
         } catch (error) {
-            loader.style.display = 'none'; msg.style.display = 'block'; msg.className = 'error'; msg.innerHTML = 'Wystąpił błąd: ' + error.message; 
+            overlay.style.display = 'none'; // Ukryj popup przy błędzie
+            msg.style.display = 'block'; 
+            msg.className = 'error'; 
+            msg.innerHTML = 'Wystąpił błąd: ' + error.message; 
+            btn.disabled = false; 
         } finally {
-            btn.disabled = false;
+            btn.disabled = false; // W razie czego odblokuj
         }
     });
     toggleKoresp(false);
