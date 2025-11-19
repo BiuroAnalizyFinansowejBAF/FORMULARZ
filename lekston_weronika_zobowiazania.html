@@ -18,8 +18,12 @@
         h1 { color: var(--primary-color); font-size: 24px; margin-bottom: 10px; }
         h2 { font-size: 16px; color: #718096; font-weight: 400; margin-top: 0; }
         
-        .advisor-info { display: inline-block; background-color: #ebf8ff; color: var(--accent-color); padding: 8px 12px; border-radius: 4px; font-size: 0.95em; margin-top: 10px; }
+        /* Stylizacja sekcji doradcy */
+        .advisor-info { display: inline-block; background-color: #ebf8ff; color: var(--accent-color); padding: 8px 12px; border-radius: 4px; font-size: 0.95em; margin-top: 10px; line-height: 1.4; transition: background-color 0.2s; }
+        .advisor-info:hover { background-color: #bee3f8; }
+        .advisor-link { text-decoration: none; color: inherit; display: block; cursor: pointer; }
         .advisor-name { font-weight: 700; display: block; }
+        .advisor-title { font-weight: 400; font-size: 0.9em; opacity: 0.9; }
 
         .form-section { margin-bottom: 30px; border-bottom: 1px solid #e2e8f0; padding-bottom: 20px; }
         .form-section h3 { color: var(--primary-color); font-size: 18px; margin-bottom: 20px; border-left: 4px solid var(--accent-color); padding-left: 10px; display: flex; justify-content: space-between; align-items: center; }
@@ -39,20 +43,47 @@
         input:focus, select:focus { border-color: var(--accent-color); outline: none; box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2); }
 
         /* Style dla dynamicznych wierszy */
-        .dynamic-row { background-color: #f8fafc; border: 1px solid #e2e8f0; padding: 20px; border-radius: var(--border-radius); margin-bottom: 20px; position: relative; transition: all 0.3s; }
-        .dynamic-row:hover { border-color: #bee3f8; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .row-header { font-weight: 700; color: var(--accent-color); margin-bottom: 15px; font-size: 0.9rem; display: flex; justify-content: space-between; }
+        .dynamic-row { background-color: #f8fafc; border: 1px solid #e2e8f0; padding: 20px; border-radius: var(--border-radius); margin-bottom: 20px; position: relative; transition: all 0.3s; animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
         
-        .add-btn { background-color: transparent; border: 2px dashed var(--accent-color); color: var(--accent-color); padding: 12px; width: 100%; border-radius: var(--border-radius); font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .row-header { font-weight: 700; color: var(--accent-color); margin-bottom: 15px; font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; }
+        
+        .remove-btn { background: transparent; border: 1px solid #fed7d7; color: var(--remove-color); font-size: 0.8rem; cursor: pointer; padding: 4px 10px; border-radius: 4px; transition: all 0.2s; display: flex; align-items: center; gap: 5px; }
+        .remove-btn:hover { background-color: #fff5f5; border-color: var(--remove-color); }
+
+        .add-btn { background-color: transparent; border: 2px dashed var(--accent-color); color: var(--accent-color); padding: 12px; width: 100%; border-radius: var(--border-radius); font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 10px; }
         .add-btn:hover { background-color: #ebf8ff; }
         .add-btn:disabled { border-color: #cbd5e0; color: #a0aec0; cursor: not-allowed; background: #f7fafc; }
 
-        /* Loading & Button styles from original */
+        /* Sekcja aktywacji (checkboxy) */
+        .activation-checkbox-container { background-color: #f0fff4; border: 1px solid #c6f6d5; padding: 15px; border-radius: var(--border-radius); margin-bottom: 15px; display: flex; align-items: center; gap: 12px; cursor: pointer; }
+        .activation-checkbox-container input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
+        .activation-checkbox-container label { margin-bottom: 0; cursor: pointer; font-weight: 600; color: #276749; font-size: 1rem; }
+        
+        /* Ukrywanie sekcji dopóki nie zaznaczone */
+        .section-content { display: none; }
+        .section-content.active { display: block; }
+
+        /* Guzik Submit i Loading */
         .submit-btn { background-color: var(--primary-color); color: white; border: none; padding: 15px 30px; font-size: 18px; border-radius: var(--border-radius); cursor: pointer; width: 100%; transition: background-color 0.3s; font-weight: bold; margin-top: 20px; }
         .submit-btn:hover { background-color: var(--accent-color); }
-        .loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.95); z-index: 9999; justify-content: center; align-items: center; flex-direction: column; }
-        .spinner { width: 60px; height: 60px; border: 6px solid #e2e8f0; border-top: 6px solid var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 25px; }
+        
+        .loading-overlay {
+            display: none;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.95); z-index: 9999;
+            justify-content: center; align-items: center; flex-direction: column;
+            text-align: center; padding: 20px;
+        }
+        .spinner {
+            width: 60px; height: 60px;
+            border: 6px solid #e2e8f0; border-top: 6px solid var(--primary-color);
+            border-radius: 50%; animation: spin 1s linear infinite;
+            margin-bottom: 25px;
+        }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .loading-title { font-size: 1.5rem; color: var(--primary-color); font-weight: bold; margin-bottom: 10px; }
+        .loading-subtitle { font-size: 1rem; color: #4a5568; max-width: 500px; line-height: 1.5; }
 
         #message { display: none; margin-top: 20px; padding: 15px; border-radius: var(--border-radius); text-align: center; }
         .success { background-color: #c6f6d5; color: #22543d; border: 1px solid #9ae6b4; }
@@ -66,25 +97,29 @@
 
 <div id="loadingOverlay" class="loading-overlay">
     <div class="spinner"></div>
-    <div class="loading-title">Trwa przesyłanie danych...</div>
-    <p>Proszę nie zamykać okna.</p>
+    <div class="loading-title">Trwa bezpieczne wysyłanie danych...</div>
+    <div class="loading-subtitle">Prosimy o chwilę cierpliwości. Proces może potrwać od 15 do 60 sekund. Nie zamykaj tej karty.</div>
 </div>
 
 <div class="container">
-    <a href="https://biuroanalizyfinansowej.pl/" target="_blank" class="logo-link">
+    <a href="https://biuroanalizyfinansowej.pl/" target="_blank" class="logo-link" title="Przejdź na stronę główną">
         <img src="baf_logo.png" alt="Logo BAF" class="logo">
     </a>
 
     <header>
         <h1>Formularz Zobowiązań Kredytowych</h1>
         <h2>Uzupełnij dane dotyczące aktualnych zobowiązań finansowych.</h2>
+        
         <div class="advisor-info">
-            <span class="advisor-name">Opiekun: Weronika Lekston</span>
+            <a href="https://q-r.to/WeronikaLekstonBiuroBAF" target="_blank" class="advisor-link" title="Kliknij, aby zobaczyć wizytówkę">
+                <span class="advisor-name">Twój opiekun: Weronika Lekston</span>
+                <span class="advisor-title">Manager zespołu ds. klienta biznesowego</span>
+            </a>
         </div>
     </header>
 
     <form id="bafDebtForm">
-        <input type="hidden" id="scriptUrl" value="https://script.google.com/macros/s/AKfycbzYHCGvMpTBGMSyLSYWfVpjuHwerklLOIg3DLUSH51HgnAqtO6EkPWDczCqNuZL0d1aEQ/exec">
+        <input type="hidden" id="scriptUrl" value="https://script.google.com/macros/s/AKfycbycje0rhOBROp1hpN4aQ9vGGTzbG0JeIgTdYzWqqkHv4QRBEdgw9oUeegKZhatE-o-mIw/exec">
         <input type="hidden" name="doradca" value="Weronika Lekston">
 
         <div style="opacity: 0; position: absolute; top: 0; left: 0; height: 0; width: 0; z-index: -1;">
@@ -100,26 +135,50 @@
 
         <div class="form-section">
             <h3>Kredyty (Hipoteczne / Gotówkowe / Firmowe)</h3>
-            <div id="loans_container"></div>
-            <button type="button" class="add-btn" id="btn_add_loan" onclick="addLoan()">
-                <span>+ Dodaj kolejny kredyt</span>
-            </button>
+            
+            <div class="activation-checkbox-container">
+                <input type="checkbox" id="has_loans" onchange="toggleSection('has_loans', 'loans_wrapper', 'btn_add_loan', addLoan)">
+                <label for="has_loans">Posiadam kredyty hipoteczne, gotówkowe lub firmowe</label>
+            </div>
+
+            <div id="loans_wrapper" class="section-content">
+                <div id="loans_container"></div>
+                <button type="button" class="add-btn" id="btn_add_loan" onclick="addLoan()">
+                    <span>+ Dodaj kolejny kredyt</span>
+                </button>
+            </div>
         </div>
 
         <div class="form-section">
             <h3>Karty Kredytowe</h3>
-            <div id="cards_container"></div>
-            <button type="button" class="add-btn" id="btn_add_card" onclick="addCard()">
-                <span>+ Dodaj kolejną kartę kredytową</span>
-            </button>
+
+            <div class="activation-checkbox-container">
+                <input type="checkbox" id="has_cards" onchange="toggleSection('has_cards', 'cards_wrapper', 'btn_add_card', addCard)">
+                <label for="has_cards">Posiadam karty kredytowe</label>
+            </div>
+
+            <div id="cards_wrapper" class="section-content">
+                <div id="cards_container"></div>
+                <button type="button" class="add-btn" id="btn_add_card" onclick="addCard()">
+                    <span>+ Dodaj kolejną kartę kredytową</span>
+                </button>
+            </div>
         </div>
 
         <div class="form-section">
             <h3>Limity w rachunku (Debet)</h3>
-            <div id="limits_container"></div>
-            <button type="button" class="add-btn" id="btn_add_limit" onclick="addLimit()">
-                <span>+ Dodaj kolejny limit</span>
-            </button>
+
+            <div class="activation-checkbox-container">
+                <input type="checkbox" id="has_limits" onchange="toggleSection('has_limits', 'limits_wrapper', 'btn_add_limit', addLimit)">
+                <label for="has_limits">Posiadam limit w koncie (debet)</label>
+            </div>
+
+            <div id="limits_wrapper" class="section-content">
+                <div id="limits_container"></div>
+                <button type="button" class="add-btn" id="btn_add_limit" onclick="addLimit()">
+                    <span>+ Dodaj kolejny limit</span>
+                </button>
+            </div>
         </div>
 
         <div class="form-section">
@@ -143,82 +202,166 @@
 <script>
     // --- LOGIKA DYNAMICZNYCH PÓL ---
     
-    let loanCount = 0;
-    let cardCount = 0;
-    let limitCount = 0;
+    // Globalne liczniki ID (nigdy nie maleją, by unikać konfliktów nazw)
+    let loanIdx = 0; 
+    let cardIdx = 0; 
+    let limitIdx = 0;
+
+    // Liczniki aktywnych elementów (do sprawdzania limitu MAX)
+    let activeLoans = 0;
+    let activeCards = 0;
+    let activeLimits = 0;
 
     const MAX_LOANS = 10;
     const MAX_CARDS = 5;
     const MAX_LIMITS = 5;
 
+    // Funkcja włączająca/wyłączająca sekcję
+    function toggleSection(checkboxId, wrapperId, btnId, addFunc) {
+        const checkbox = document.getElementById(checkboxId);
+        const wrapper = document.getElementById(wrapperId);
+        
+        if (checkbox.checked) {
+            wrapper.classList.add('active');
+            // Jeśli kontener pusty, dodaj pierwszy wiersz automatycznie
+            const containerType = wrapperId.replace('_wrapper', '_container');
+            if (document.getElementById(containerType).children.length === 0) {
+                addFunc();
+            }
+        } else {
+            wrapper.classList.remove('active');
+            const containerType = wrapperId.replace('_wrapper', '_container');
+            document.getElementById(containerType).innerHTML = '';
+            
+            // Reset liczników "aktywnych"
+            if (wrapperId.includes('loans')) activeLoans = 0;
+            if (wrapperId.includes('cards')) activeCards = 0;
+            if (wrapperId.includes('limits')) activeLimits = 0;
+            
+            updateButtons();
+        }
+    }
+
     // Funkcja dodająca KREDYT
     function addLoan() {
-        if (loanCount >= MAX_LOANS) return;
-        loanCount++;
+        if (activeLoans >= MAX_LOANS) return;
+        loanIdx++;
+        activeLoans++;
+        
         const container = document.getElementById('loans_container');
         const div = document.createElement('div');
         div.className = 'dynamic-row';
+        div.id = `loan_row_${loanIdx}`;
+        
         div.innerHTML = `
-            <div class="row-header">Kredyt nr ${loanCount}</div>
+            <div class="row-header">
+                <span>Kredyt (Pozycja #${activeLoans})</span>
+                <button type="button" class="remove-btn" onclick="removeRow('loan_row_${loanIdx}', 'loan')">
+                    ✕ Usuń to zobowiązanie
+                </button>
+            </div>
             <div class="grid-3">
-                <div class="form-group"><label>W jakim banku</label><input type="text" name="bank${loanCount}"></div>
-                <div class="form-group"><label>Kwota udzielonego kredytu</label><input type="number" step="0.01" name="kwota${loanCount}"></div>
+                <div class="form-group"><label>Nazwa banku</label><input type="text" class="data-field" data-type="bank" data-cat="loan"></div>
+                <div class="form-group"><label>Kwota udzielonego kredytu</label><input type="number" step="0.01" class="data-field" data-type="kwota" data-cat="loan"></div>
                 <div class="form-group"><label>Waluta kredytu</label>
-                    <select name="waluta${loanCount}">
+                    <select class="data-field" data-type="waluta" data-cat="loan">
                         <option value="PLN">PLN</option>
                         <option value="EUR">EUR</option>
                         <option value="USD">USD</option>
                         <option value="CHF">CHF</option>
                     </select>
                 </div>
-                <div class="form-group"><label>Data podpisania umowy</label><input type="date" name="data${loanCount}"></div>
-                <div class="form-group"><label>Data końca umowy</label><input type="date" name="koniec${loanCount}"></div>
-                <div class="form-group"><label>Bieżące saldo (ile zostało)</label><input type="number" step="0.01" name="saldo${loanCount}"></div>
-                <div class="form-group"><label>Bieżąca rata</label><input type="number" step="0.01" name="rata${loanCount}"></div>
+                <div class="form-group"><label>Data podpisania umowy</label><input type="date" class="data-field" data-type="data" data-cat="loan"></div>
+                <div class="form-group"><label>Data końca umowy</label><input type="date" class="data-field" data-type="koniec" data-cat="loan"></div>
+                <div class="form-group"><label>Bieżące saldo (ile zostało)</label><input type="number" step="0.01" class="data-field" data-type="saldo" data-cat="loan"></div>
+                <div class="form-group"><label>Bieżąca rata</label><input type="number" step="0.01" class="data-field" data-type="rata" data-cat="loan"></div>
             </div>
         `;
         container.appendChild(div);
         updateButtons();
+        renumberHeaders('loans_container', 'Kredyt');
     }
 
-    // Funkcja dodająca KARTĘ KREDYTOWĄ
+    // Funkcja dodająca KARTĘ
     function addCard() {
-        if (cardCount >= MAX_CARDS) return;
-        cardCount++;
+        if (activeCards >= MAX_CARDS) return;
+        cardIdx++;
+        activeCards++;
+        
         const container = document.getElementById('cards_container');
         const div = document.createElement('div');
         div.className = 'dynamic-row';
+        div.id = `card_row_${cardIdx}`;
+        
         div.innerHTML = `
-            <div class="row-header">Karta Kredytowa nr ${cardCount}</div>
+            <div class="row-header">
+                <span>Karta Kredytowa (Pozycja #${activeCards})</span>
+                <button type="button" class="remove-btn" onclick="removeRow('card_row_${cardIdx}', 'card')">
+                    ✕ Usuń to zobowiązanie
+                </button>
+            </div>
             <div class="grid">
-                <div class="form-group"><label>W jakim banku</label><input type="text" name="karta${cardCount}"></div>
-                <div class="form-group"><label>Kwota przyznanego limitu</label><input type="number" step="0.01" name="kwotakk${cardCount}"></div>
-                <div class="form-group"><label>Data podpisania umowy</label><input type="date" name="datakk${cardCount}"></div>
-                <div class="form-group"><label>Bieżące saldo (wykorzystanie)</label><input type="number" step="0.01" name="saldokk${cardCount}"></div>
+                <div class="form-group"><label>Nazwa banku</label><input type="text" class="data-field" data-type="karta" data-cat="card"></div>
+                <div class="form-group"><label>Kwota przyznanego limitu</label><input type="number" step="0.01" class="data-field" data-type="kwotakk" data-cat="card"></div>
+                <div class="form-group"><label>Data podpisania umowy</label><input type="date" class="data-field" data-type="datakk" data-cat="card"></div>
+                <div class="form-group"><label>Bieżące saldo (wykorzystanie)</label><input type="number" step="0.01" class="data-field" data-type="saldokk" data-cat="card"></div>
             </div>
         `;
         container.appendChild(div);
         updateButtons();
+        renumberHeaders('cards_container', 'Karta Kredytowa');
     }
 
-    // Funkcja dodająca LIMIT W KONCIE
+    // Funkcja dodająca LIMIT
     function addLimit() {
-        if (limitCount >= MAX_LIMITS) return;
-        limitCount++;
+        if (activeLimits >= MAX_LIMITS) return;
+        limitIdx++;
+        activeLimits++;
+        
         const container = document.getElementById('limits_container');
         const div = document.createElement('div');
         div.className = 'dynamic-row';
+        div.id = `limit_row_${limitIdx}`;
+        
         div.innerHTML = `
-            <div class="row-header">Limit w koncie nr ${limitCount}</div>
+            <div class="row-header">
+                <span>Limit w koncie (Pozycja #${activeLimits})</span>
+                <button type="button" class="remove-btn" onclick="removeRow('limit_row_${limitIdx}', 'limit')">
+                    ✕ Usuń to zobowiązanie
+                </button>
+            </div>
             <div class="grid">
-                <div class="form-group"><label>W jakim banku</label><input type="text" name="limit${limitCount}"></div>
-                <div class="form-group"><label>Kwota przyznanego limitu</label><input type="number" step="0.01" name="kwotalimit${limitCount}"></div>
-                <div class="form-group"><label>Data podpisania umowy</label><input type="date" name="datalimit${limitCount}"></div>
-                <div class="form-group"><label>Bieżące saldo (wykorzystanie)</label><input type="number" step="0.01" name="saldolimit${limitCount}"></div>
+                <div class="form-group"><label>Nazwa banku</label><input type="text" class="data-field" data-type="limit" data-cat="limit"></div>
+                <div class="form-group"><label>Kwota przyznanego limitu</label><input type="number" step="0.01" class="data-field" data-type="kwotalimit" data-cat="limit"></div>
+                <div class="form-group"><label>Data podpisania umowy</label><input type="date" class="data-field" data-type="datalimit" data-cat="limit"></div>
+                <div class="form-group"><label>Bieżące saldo (wykorzystanie)</label><input type="number" step="0.01" class="data-field" data-type="saldolimit" data-cat="limit"></div>
             </div>
         `;
         container.appendChild(div);
         updateButtons();
+        renumberHeaders('limits_container', 'Limit w koncie');
+    }
+
+    // Funkcja usuwająca wiersz
+    window.removeRow = function(rowId, type) {
+        const row = document.getElementById(rowId);
+        if (row) {
+            row.remove();
+            if (type === 'loan') { activeLoans--; renumberHeaders('loans_container', 'Kredyt'); }
+            if (type === 'card') { activeCards--; renumberHeaders('cards_container', 'Karta Kredytowa'); }
+            if (type === 'limit') { activeLimits--; renumberHeaders('limits_container', 'Limit w koncie'); }
+            updateButtons();
+        }
+    }
+
+    // Aktualizacja numeracji nagłówków
+    function renumberHeaders(containerId, namePrefix) {
+        const container = document.getElementById(containerId);
+        const rows = container.getElementsByClassName('dynamic-row');
+        Array.from(rows).forEach((row, index) => {
+            const headerSpan = row.querySelector('.row-header span');
+            headerSpan.textContent = `${namePrefix} (Pozycja #${index + 1})`;
+        });
     }
 
     function updateButtons() {
@@ -226,31 +369,32 @@
         const btnCard = document.getElementById('btn_add_card');
         const btnLimit = document.getElementById('btn_add_limit');
 
-        if (loanCount >= MAX_LOANS) { btnLoan.disabled = true; btnLoan.innerHTML = "Osiągnięto limit (10)"; }
-        if (cardCount >= MAX_CARDS) { btnCard.disabled = true; btnCard.innerHTML = "Osiągnięto limit (5)"; }
-        if (limitCount >= MAX_LIMITS) { btnLimit.disabled = true; btnLimit.innerHTML = "Osiągnięto limit (5)"; }
+        if (btnLoan) {
+            btnLoan.disabled = (activeLoans >= MAX_LOANS);
+            btnLoan.querySelector('span').textContent = (activeLoans >= MAX_LOANS) ? "Osiągnięto limit (10)" : "+ Dodaj kolejny kredyt";
+        }
+        if (btnCard) {
+            btnCard.disabled = (activeCards >= MAX_CARDS);
+            btnCard.querySelector('span').textContent = (activeCards >= MAX_CARDS) ? "Osiągnięto limit (5)" : "+ Dodaj kolejną kartę kredytową";
+        }
+        if (btnLimit) {
+            btnLimit.disabled = (activeLimits >= MAX_LIMITS);
+            btnLimit.querySelector('span').textContent = (activeLimits >= MAX_LIMITS) ? "Osiągnięto limit (5)" : "+ Dodaj kolejny limit";
+        }
     }
-
-    // Inicjalizacja (dodaj po jednym pustym wierszu na start)
-    document.addEventListener('DOMContentLoaded', function() {
-        addLoan();
-        addCard();
-        addLimit();
-    });
 
     // --- WYSYŁKA ---
     document.getElementById('bafDebtForm').addEventListener('submit', async function(e) {
         e.preventDefault();
-        if (document.getElementById('website_hp').value !== "") { return; } // Honeypot check
+        if (document.getElementById('website_hp').value !== "") { return; } 
 
         const btn = document.getElementById('btnSubmit');
         const overlay = document.getElementById('loadingOverlay');
         const msg = document.getElementById('message');
         const scriptURL = document.getElementById('scriptUrl').value;
 
-        // Sprawdź konfigurację URL
         if (scriptURL.includes("TUTAJ_WKLEJ") || scriptURL === "") {
-            alert("Błąd: Nie skonfigurowano adresu skryptu Google (Web App URL).");
+            alert("Błąd: Brak URL skryptu.");
             return;
         }
 
@@ -259,15 +403,46 @@
         msg.style.display = 'none';
 
         try {
-            // Zbieranie danych
-            const formData = new FormData(document.forms['bafDebtForm']);
             const dataObject = {};
-            formData.forEach((value, key) => dataObject[key] = value);
+            const formData = new FormData(document.forms['bafDebtForm']);
+            
+            dataObject['doradca'] = formData.get('doradca');
+            dataObject['imie_nazwisko'] = formData.get('imie_nazwisko');
+            dataObject['alimenty'] = formData.get('alimenty');
 
-            // Wysyłka
+            // Kredyty
+            const loanRows = document.querySelectorAll('#loans_container .dynamic-row');
+            loanRows.forEach((row, index) => {
+                const i = index + 1; 
+                row.querySelectorAll('.data-field').forEach(input => {
+                    const key = input.dataset.type + i; 
+                    dataObject[key] = input.value;
+                });
+            });
+
+            // Karty
+            const cardRows = document.querySelectorAll('#cards_container .dynamic-row');
+            cardRows.forEach((row, index) => {
+                const i = index + 1;
+                row.querySelectorAll('.data-field').forEach(input => {
+                    const key = input.dataset.type + i;
+                    dataObject[key] = input.value;
+                });
+            });
+
+            // Limity
+            const limitRows = document.querySelectorAll('#limits_container .dynamic-row');
+            limitRows.forEach((row, index) => {
+                const i = index + 1;
+                row.querySelectorAll('.data-field').forEach(input => {
+                    const key = input.dataset.type + i; 
+                    dataObject[key] = input.value;
+                });
+            });
+
             const response = await fetch(scriptURL, {
                 method: 'POST',
-                body: JSON.stringify(dataObject) // W tym formularzu wysyłamy czysty JSON bez plików
+                body: JSON.stringify(dataObject)
             });
 
             const result = await response.json();
@@ -278,7 +453,6 @@
             if (result.result === 'success') {
                 msg.className = 'success';
                 msg.innerHTML = `<strong>Sukces!</strong> Zobowiązania zostały przesłane. <br> <a href="${result.link}" target="_blank">Zobacz utworzony plik</a>`;
-                // Opcjonalnie reset: document.forms['bafDebtForm'].reset();
             } else {
                 throw new Error(result.error || "Nieznany błąd serwera.");
             }
