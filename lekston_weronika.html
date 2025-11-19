@@ -13,9 +13,14 @@
         header { margin-bottom: 40px; padding-right: 140px; }
         h1 { color: var(--primary-color); font-size: 24px; margin-bottom: 10px; }
         h2 { font-size: 16px; color: #718096; font-weight: 400; margin-top: 0; }
-        .advisor-info { display: inline-block; background-color: #ebf8ff; color: var(--accent-color); padding: 8px 12px; border-radius: 4px; font-size: 0.95em; margin-top: 10px; line-height: 1.4; }
+        
+        /* STYL DLA LINKU DORADCY */
+        .advisor-info { display: inline-block; background-color: #ebf8ff; color: var(--accent-color); padding: 8px 12px; border-radius: 4px; font-size: 0.95em; margin-top: 10px; line-height: 1.4; transition: background-color 0.2s; }
+        .advisor-info:hover { background-color: #bee3f8; }
+        .advisor-link { text-decoration: none; color: inherit; display: block; cursor: pointer; }
         .advisor-name { font-weight: 700; display: block; }
         .advisor-title { font-weight: 400; font-size: 0.9em; opacity: 0.9; }
+
         .form-section { margin-bottom: 30px; border-bottom: 1px solid #e2e8f0; padding-bottom: 20px; }
         .form-section h3 { color: var(--primary-color); font-size: 18px; margin-bottom: 20px; border-left: 4px solid var(--accent-color); padding-left: 10px; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
@@ -34,7 +39,11 @@
         .checkbox-container input[type="checkbox"] { margin-top: 4px; margin-right: 12px; width: 20px; height: 20px; flex-shrink: 0; cursor: pointer; }
         .checkbox-container label { margin-bottom: 0; font-size: 0.9rem; color: var(--text-color); cursor: pointer; line-height: 1.4; }
         
-        /* Nowoczesna odznaka bezpieczeństwa */
+        /* Style dla inputu plikowego */
+        input[type="file"] { border: 1px dashed #cbd5e0; padding: 20px; background: #f8fafc; cursor: pointer; }
+        input[type="file"]:hover { background: #edf2f7; border-color: var(--accent-color); }
+        .file-hint { font-size: 0.8rem; color: #718096; margin-top: 5px; }
+
         .security-badge { display: flex; align-items: center; justify-content: center; background-color: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; padding: 10px 20px; border-radius: 50px; font-size: 0.85rem; font-weight: 600; width: fit-content; margin: 0 auto 25px auto; box-shadow: 0 2px 4px rgba(0,0,0,0.03); gap: 10px; transition: transform 0.2s; }
         .security-badge:hover { transform: translateY(-1px); box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         .security-badge svg { width: 16px; height: 16px; fill: currentColor; }
@@ -61,9 +70,12 @@
     <header>
         <h1>Formularz Danych Klienta</h1>
         <h2>Proszę o dokładne uzupełnienie poniższych danych w celu przygotowania dokumentacji.</h2>
+        
         <div class="advisor-info">
-            <span class="advisor-name">Twój opiekun: Weronika Lekston</span>
-            <span class="advisor-title">Manager zespołu ds. klienta biznesowego</span>
+            <a href="https://q-r.to/WeronikaLekstonBiuroBAF" target="_blank" class="advisor-link" title="Kliknij, aby zobaczyć wizytówkę">
+                <span class="advisor-name">Twój opiekun: Weronika Lekston</span>
+                <span class="advisor-title">Manager zespołu ds. klienta biznesowego</span>
+            </a>
         </div>
     </header>
 
@@ -159,6 +171,13 @@
                     <input type="hidden" name="kontynuacja" id="kontynuacja_final">
                 </div>
 
+                <div class="form-group" style="grid-column: span 2;">
+                    <h3>Załączniki (Opcjonalnie)</h3>
+                    <label>Dodaj dokumenty (PIT, KPiR, wyciągi itp.)</label>
+                    <input type="file" id="file_upload" name="files" multiple>
+                    <div class="file-hint">Maksymalnie 5 plików, każdy do 5MB.</div>
+                </div>
+
                 <div class="form-group" style="grid-column: span 2;"><label>Uwagi</label><textarea name="uwagi"></textarea></div>
             </div>
         </div>
@@ -183,7 +202,7 @@
             Biuro Analizy Finansowej 2025 © Wszelkie prawa zastrzeżone.
         </div>
 
-        <div class="loading" id="loader">Przetwarzanie danych, proszę czekać...</div>
+        <div class="loading" id="loader">Przetwarzanie danych i wysyłanie plików, proszę czekać...</div>
         <div id="message"></div>
     </form>
 </div>
@@ -195,10 +214,34 @@
     dateInput.addEventListener('input', function(e) { let v = this.value.replace(/\D/g, ''); if (v.length > 6) v = v.slice(0, 6); if (v.length > 2) { this.value = v.slice(0, 2) + '/' + v.slice(2); } else { this.value = v; } });
     function generateChildInputs(count) { const container = document.getElementById('dzieci_lata_container'); container.innerHTML = ''; count = parseInt(count); if (isNaN(count) || count <= 0) return; for (let i = 1; i <= count; i++) { const input = document.createElement('input'); input.type = 'number'; input.placeholder = 'Rok ur. ' + i; input.className = 'child-year-input'; input.min = '1990'; input.max = new Date().getFullYear(); container.appendChild(input); } }
     
-    document.getElementById('bafForm').addEventListener('submit', function(e) {
+    // Funkcja do CZYTANIA PLIKÓW Base64
+    const getBase64 = (file) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => {
+                resolve({
+                    name: file.name,
+                    mimeType: file.type,
+                    data: reader.result.split(',')[1] 
+                });
+            };
+            reader.onerror = error => reject(error);
+        });
+    };
+
+    document.getElementById('bafForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         if (document.getElementById('website_hp').value !== "") { return; } // Honeypot
         
+        const btn = document.getElementById('btnSubmit');
+        const loader = document.getElementById('loader');
+        const msg = document.getElementById('message');
+        const scriptURL = document.getElementById('scriptUrl').value;
+        
+        if (scriptURL.includes("TUTAJ_WKLEJ")) { alert("Błąd konfiguracji URL"); return; }
+
+        // Walidacja
         const count = document.getElementById('ile_dzieci').value;
         const yearsInputs = document.querySelectorAll('.child-year-input');
         let finalString = "";
@@ -213,22 +256,49 @@
         const korespType = document.querySelector('input[name="koresp_type"]:checked').value;
         if (korespType === 'same') { document.getElementById('adres_koresp_input').value = "Taki sam jak zamieszkania"; }
 
-        const scriptURL = document.getElementById('scriptUrl').value;
-        const form = document.forms['bafForm'];
-        const btn = document.getElementById('btnSubmit');
-        const loader = document.getElementById('loader');
-        const msg = document.getElementById('message');
-        if (scriptURL.includes("TUTAJ_WKLEJ")) { alert("Błąd konfiguracji URL"); return; }
         btn.disabled = true; loader.style.display = 'block'; msg.style.display = 'none';
-        fetch(scriptURL, { method: 'POST', body: new FormData(form)})
-            .then(response => response.json())
-            .then(response => {
-                loader.style.display = 'none'; msg.style.display = 'block';
-                if (response.result === 'success') { msg.className = 'success'; msg.innerHTML = '<strong>Sukces!</strong> Formularz został poprawnie uzupełniony i przesłany. Dziękujemy.'; form.reset(); document.getElementById('dzieci_lata_container').innerHTML = ''; toggleKoresp(false); togglePolecenie(false); } 
-                else { throw new Error(response.error); }
-                btn.disabled = false;
-            })
-            .catch(error => { loader.style.display = 'none'; msg.style.display = 'block'; msg.className = 'error'; msg.innerHTML = 'Wystąpił błąd: ' + error.message; btn.disabled = false; });
+
+        try {
+            const formDataObj = {};
+            const formData = new FormData(document.forms['bafForm']);
+            formData.forEach((value, key) => { if (key !== 'files') formDataObj[key] = value; });
+
+            const fileInput = document.getElementById('file_upload');
+            let filesData = [];
+            if (fileInput.files.length > 0) {
+                if (fileInput.files.length > 5) throw new Error("Za dużo plików. Maksymalnie 5.");
+                filesData = await Promise.all([...fileInput.files].map(file => {
+                    if (file.size > 5 * 1024 * 1024) throw new Error(`Plik ${file.name} jest za duży (max 5MB).`);
+                    return getBase64(file);
+                }));
+            }
+
+            const payload = { formData: formDataObj, files: filesData };
+
+            const response = await fetch(scriptURL, {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+
+            loader.style.display = 'none'; msg.style.display = 'block';
+
+            if (result.result === 'success') {
+                msg.className = 'success'; 
+                msg.innerHTML = '<strong>Sukces!</strong> Formularz i pliki zostały przesłane. Dziękujemy.'; 
+                document.forms['bafForm'].reset(); 
+                document.getElementById('dzieci_lata_container').innerHTML = ''; 
+                toggleKoresp(false); togglePolecenie(false); 
+            } else {
+                throw new Error(result.error || "Nieznany błąd serwera.");
+            }
+
+        } catch (error) {
+            loader.style.display = 'none'; msg.style.display = 'block'; msg.className = 'error'; msg.innerHTML = 'Wystąpił błąd: ' + error.message; 
+        } finally {
+            btn.disabled = false;
+        }
     });
     toggleKoresp(false);
     togglePolecenie(false);
