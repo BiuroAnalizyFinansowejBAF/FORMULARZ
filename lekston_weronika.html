@@ -9,12 +9,17 @@
         :root { --primary-color: #1a365d; --accent-color: #2b6cb0; --bg-color: #f7fafc; --white: #ffffff; --text-color: #2d3748; --border-radius: 8px; }
         body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; display: flex; justify-content: center; }
         .container { background: var(--white); width: 100%; max-width: 900px; padding: 40px; border-radius: var(--border-radius); box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: relative; }
-        .logo { position: absolute; top: 30px; right: 40px; width: 120px; height: auto; }
+        
+        /* Logo klikalne */
+        .logo-link { position: absolute; top: 30px; right: 40px; display: block; transition: transform 0.2s; }
+        .logo-link:hover { transform: scale(1.05); }
+        .logo { width: 120px; height: auto; display: block; }
+
         header { margin-bottom: 40px; padding-right: 140px; }
         h1 { color: var(--primary-color); font-size: 24px; margin-bottom: 10px; }
         h2 { font-size: 16px; color: #718096; font-weight: 400; margin-top: 0; }
         
-        /* STYL DLA LINKU DORADCY */
+        /* Link do wizytówki doradcy */
         .advisor-info { display: inline-block; background-color: #ebf8ff; color: var(--accent-color); padding: 8px 12px; border-radius: 4px; font-size: 0.95em; margin-top: 10px; line-height: 1.4; transition: background-color 0.2s; }
         .advisor-info:hover { background-color: #bee3f8; }
         .advisor-link { text-decoration: none; color: inherit; display: block; cursor: pointer; }
@@ -24,7 +29,11 @@
         .form-section { margin-bottom: 30px; border-bottom: 1px solid #e2e8f0; padding-bottom: 20px; }
         .form-section h3 { color: var(--primary-color); font-size: 18px; margin-bottom: 20px; border-left: 4px solid var(--accent-color); padding-left: 10px; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } .logo { position: static; margin-bottom: 20px; display: block; } header { padding-right: 0; } }
+        @media (max-width: 600px) { 
+            .grid { grid-template-columns: 1fr; } 
+            .logo-link { position: static; margin-bottom: 20px; display: inline-block; }
+            header { padding-right: 0; } 
+        }
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 6px; font-weight: 500; font-size: 0.9rem; }
         input[type="text"], input[type="email"], input[type="tel"], input[type="date"], input[type="number"], select, textarea { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e0; border-radius: var(--border-radius); font-size: 1rem; transition: border-color 0.3s; box-sizing: border-box; }
@@ -38,8 +47,6 @@
         .checkbox-container { display: flex; align-items: flex-start; margin-bottom: 20px; padding: 15px; background-color: #f8f9fa; border-radius: var(--border-radius); border: 1px solid #e2e8f0; }
         .checkbox-container input[type="checkbox"] { margin-top: 4px; margin-right: 12px; width: 20px; height: 20px; flex-shrink: 0; cursor: pointer; }
         .checkbox-container label { margin-bottom: 0; font-size: 0.9rem; color: var(--text-color); cursor: pointer; line-height: 1.4; }
-        
-        /* Style dla inputu plikowego */
         input[type="file"] { border: 1px dashed #cbd5e0; padding: 20px; background: #f8fafc; cursor: pointer; }
         input[type="file"]:hover { background: #edf2f7; border-color: var(--accent-color); }
         .file-hint { font-size: 0.8rem; color: #718096; margin-top: 5px; }
@@ -48,7 +55,14 @@
         .security-badge:hover { transform: translateY(-1px); box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         .security-badge svg { width: 16px; height: 16px; fill: currentColor; }
 
-        .footer-copy { text-align: center; font-size: 0.8rem; color: #a0aec0; margin-top: 30px; padding-top: 20px; border-top: 1px solid #edf2f7; }
+        /* Sekcja stopki firmowej */
+        .company-stamp { text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0; color: #4a5568; font-size: 0.9rem; line-height: 1.6; }
+        .company-name { font-weight: 700; color: var(--primary-color); text-transform: uppercase; letter-spacing: 0.5px; }
+        .company-website { margin-top: 8px; display: inline-block; }
+        .company-website a { color: var(--accent-color); text-decoration: none; font-weight: 600; border-bottom: 1px dashed var(--accent-color); padding-bottom: 2px; transition: all 0.2s; }
+        .company-website a:hover { border-bottom-style: solid; color: var(--primary-color); }
+
+        .footer-copy { text-align: center; font-size: 0.75rem; color: #cbd5e0; margin-top: 20px; }
         .legal-note { font-size: 0.75rem; color: #718096; margin-top: 15px; line-height: 1.5; text-align: justify; }
         .legal-note a { color: var(--accent-color); text-decoration: none; }
         .legal-note a:hover { text-decoration: underline; }
@@ -65,7 +79,9 @@
 <body>
 
 <div class="container">
-    <img src="baf_logo.png" alt="Logo BAF" class="logo">
+    <a href="https://biuroanalizyfinansowej.pl/" target="_blank" class="logo-link" title="Przejdź na stronę główną">
+        <img src="baf_logo.png" alt="Logo BAF" class="logo">
+    </a>
 
     <header>
         <h1>Formularz Danych Klienta</h1>
@@ -198,6 +214,15 @@
             Administratorem Twoich danych osobowych jest Biuro Analizy finansowej Mateusz Dzidkowski z siedzibą w Krakowie. Twoje dane wpisane w formularzu będą przetwarzane wyłącznie w celu przygotowania wniosku i procesowania (zgodnie z art. 6 ust. 1 lit. f RODO – prawnie uzasadniony interes administratora). Pełną informację o Twoich prawach (m.in. dostępu do danych, ich sprostowania czy usunięcia) znajdziesz w naszej <a href="https://biuroanalizyfinansowej.pl/polityka-prywatnosci/" target="_blank">Polityce Prywatności</a>.
         </div>
 
+        <div class="company-stamp">
+            <div class="company-name">BIURO ANALIZY FINANSOWEJ MATEUSZ DZIDKOWSKI</div>
+            <div>30-719 Kraków, ul. Gromadzka 103A lok. 2</div>
+            <div>NIP: 6612281631 &nbsp; REGON: 381984834</div>
+            <div class="company-website">
+                <a href="https://biuroanalizyfinansowej.pl/" target="_blank">biuroanalizyfinansowej.pl</a>
+            </div>
+        </div>
+
         <div class="footer-copy">
             Biuro Analizy Finansowej 2025 © Wszelkie prawa zastrzeżone.
         </div>
@@ -214,25 +239,18 @@
     dateInput.addEventListener('input', function(e) { let v = this.value.replace(/\D/g, ''); if (v.length > 6) v = v.slice(0, 6); if (v.length > 2) { this.value = v.slice(0, 2) + '/' + v.slice(2); } else { this.value = v; } });
     function generateChildInputs(count) { const container = document.getElementById('dzieci_lata_container'); container.innerHTML = ''; count = parseInt(count); if (isNaN(count) || count <= 0) return; for (let i = 1; i <= count; i++) { const input = document.createElement('input'); input.type = 'number'; input.placeholder = 'Rok ur. ' + i; input.className = 'child-year-input'; input.min = '1990'; input.max = new Date().getFullYear(); container.appendChild(input); } }
     
-    // Funkcja do CZYTANIA PLIKÓW Base64
     const getBase64 = (file) => {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
-            reader.onload = () => {
-                resolve({
-                    name: file.name,
-                    mimeType: file.type,
-                    data: reader.result.split(',')[1] 
-                });
-            };
+            reader.onload = () => resolve({ name: file.name, mimeType: file.type, data: reader.result.split(',')[1] });
             reader.onerror = error => reject(error);
         });
     };
 
     document.getElementById('bafForm').addEventListener('submit', async function(e) {
         e.preventDefault();
-        if (document.getElementById('website_hp').value !== "") { return; } // Honeypot
+        if (document.getElementById('website_hp').value !== "") { return; } 
         
         const btn = document.getElementById('btnSubmit');
         const loader = document.getElementById('loader');
@@ -241,7 +259,6 @@
         
         if (scriptURL.includes("TUTAJ_WKLEJ")) { alert("Błąd konfiguracji URL"); return; }
 
-        // Walidacja
         const count = document.getElementById('ile_dzieci').value;
         const yearsInputs = document.querySelectorAll('.child-year-input');
         let finalString = "";
@@ -274,12 +291,7 @@
             }
 
             const payload = { formData: formDataObj, files: filesData };
-
-            const response = await fetch(scriptURL, {
-                method: 'POST',
-                body: JSON.stringify(payload)
-            });
-
+            const response = await fetch(scriptURL, { method: 'POST', body: JSON.stringify(payload) });
             const result = await response.json();
 
             loader.style.display = 'none'; msg.style.display = 'block';
@@ -293,7 +305,6 @@
             } else {
                 throw new Error(result.error || "Nieznany błąd serwera.");
             }
-
         } catch (error) {
             loader.style.display = 'none'; msg.style.display = 'block'; msg.className = 'error'; msg.innerHTML = 'Wystąpił błąd: ' + error.message; 
         } finally {
