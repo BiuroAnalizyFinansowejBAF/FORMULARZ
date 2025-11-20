@@ -16,6 +16,8 @@
             --remove-color: #e53e3e; 
             --disabled-bg: #edf2f7;
             --disabled-text: #a0aec0;
+            --firm-bg: #fffaf0; /* Lekki kolor dla firmowych */
+            --firm-border: #ed8936;
         }
         body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; display: flex; justify-content: center; }
         .container { background: var(--white); width: 100%; max-width: 950px; padding: 40px; border-radius: var(--border-radius); box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: relative; }
@@ -65,6 +67,21 @@
             border-color: #e2e8f0;
             pointer-events: none; /* Blokada klikania */
         }
+
+        /* STYL DLA FIRMOWYCH */
+        .dynamic-row.firm-row {
+            background-color: var(--firm-bg);
+            border-color: var(--firm-border);
+        }
+        .dynamic-row.firm-row .row-top-bar {
+            background-color: #fffaf0;
+            border-color: #fbd38d;
+        }
+        .firm-badge {
+            display: none;
+            background: #ed8936; color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; margin-left: 10px; text-transform: uppercase;
+        }
+        .dynamic-row.firm-row .firm-badge { display: inline-block; }
         
         /* Dynamiczne wiersze */
         .dynamic-row { 
@@ -85,7 +102,7 @@
             background: #f7fafc; padding: 15px; border-radius: 6px; border: 1px solid #edf2f7;
         }
         
-        .type-select-container { flex-grow: 1; max-width: 400px; }
+        .type-select-container { flex-grow: 1; max-width: 500px; }
         .type-select-label { font-size: 0.8rem; color: var(--accent-color); font-weight: 700; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
         .type-select { border: 2px solid var(--accent-color) !important; font-weight: 600; color: var(--primary-color); }
 
@@ -135,6 +152,9 @@
 
         /* Ukrywanie pól */
         .hidden { display: none; }
+        
+        /* Optyczne grupowanie w select */
+        optgroup { font-weight: bold; color: #2d3748; }
     </style>
 </head>
 <body>
@@ -179,7 +199,7 @@
 
         <div class="form-section">
             <h3>Twoje Zobowiązania</h3>
-            <p style="font-size: 0.9rem; color: #718096; margin-bottom: 20px;">Dodaj po kolei wszystkie aktywne zobowiązania. Wybierz odpowiedni typ dla każdej pozycji.</p>
+            <p style="font-size: 0.9rem; color: #718096; margin-bottom: 20px;">Dodaj po kolei wszystkie aktywne zobowiązania. Wybierz odpowiedni rodzaj (Prywatne/Firmowe) dla każdej pozycji.</p>
             
             <div id="obligations_container"></div>
 
@@ -192,7 +212,7 @@
             <h3>Uwagi i inne</h3>
             <div class="form-group">
                 <label>Uwagi do wniosku</label>
-                <textarea name="uwagi" placeholder="Tutaj możesz wpisać zobowiązania prywatne, publicznoprawne (ZUS/US) lub dodatkowe informacje do opiekuna."></textarea>
+                <textarea name="uwagi" placeholder="Tutaj możesz wpisać zobowiązania publicznoprawne (ZUS/US), prywatne lub dodatkowe informacje."></textarea>
             </div>
         </div>
 
@@ -239,15 +259,25 @@
         div.className = 'dynamic-row';
         div.id = `row_${rowCounter}`;
         
+        // Zbudowanie listy wyboru z podziałem na Firmowe/Prywatne
         div.innerHTML = `
             <div class="row-top-bar">
                 <div class="type-select-container">
-                    <div class="type-select-label">Rodzaj zobowiązania</div>
+                    <div class="type-select-label">Rodzaj zobowiązania <span class="firm-badge">FIRMOWE</span></div>
                     <select class="type-select" id="type_${rowCounter}" onchange="handleTypeChange(${rowCounter})">
-                        <option value="kredyt">Kredyt / Pożyczka ratalna</option>
-                        <option value="karta">Karta Kredytowa</option>
-                        <option value="limit">Kredyt w rachunku bieżącym (Limit)</option>
-                        <option value="inne">Inne (np. alimenty, inne)</option>
+                        <optgroup label="Zobowiązania Prywatne (Osoba Fizyczna)">
+                            <option value="kredyt">Kredyt / Pożyczka ratalna (Prywatna)</option>
+                            <option value="karta">Karta Kredytowa (Prywatna)</option>
+                            <option value="limit">Limit w koncie (Prywatny)</option>
+                        </optgroup>
+                        <optgroup label="Zobowiązania Firmowe (Działalność)">
+                            <option value="f_kredyt">Kredyt Firmowy / Leasing</option>
+                            <option value="f_karta">Karta Kredytowa Firmowa</option>
+                            <option value="f_limit">Limit w koncie Firmowym</option>
+                        </optgroup>
+                        <optgroup label="Inne">
+                            <option value="inne">Inne (np. alimenty)</option>
+                        </optgroup>
                     </select>
                 </div>
                 <button type="button" class="remove-btn" onclick="removeRow(${rowCounter})">
@@ -306,51 +336,53 @@
             </div>
         `;
         container.appendChild(div);
-        
-        // Uruchom logikę, aby ustawić domyślny stan (kredyt - wszystko aktywne)
         handleTypeChange(rowCounter);
     }
 
     function handleTypeChange(id) {
         const type = document.getElementById(`type_${id}`).value;
+        const row = document.getElementById(`row_${id}`);
         const standardContainer = document.getElementById(`standard_fields_${id}`);
         const otherContainer = document.getElementById(`other_fields_${id}`);
         
         const groupEnd = standardContainer.querySelector('.field-group-end');
         const groupRate = standardContainer.querySelector('.field-group-rate');
 
-        // Reset
+        // Reset widoczności i stylów
         standardContainer.classList.remove('hidden');
         otherContainer.classList.add('hidden');
         groupEnd.classList.remove('field-disabled');
         groupRate.classList.remove('field-disabled');
+        
+        // Obsługa stylu "Firmowy"
+        if (type.startsWith('f_')) {
+            row.classList.add('firm-row');
+        } else {
+            row.classList.remove('firm-row');
+        }
 
-        if (type === 'kredyt') {
-            // Kredyt: Wszystko aktywne
-        } 
-        else if (type === 'karta' || type === 'limit') {
-            // Karta/Limit: Wyłącz Data Końca i Rata (kontrast)
-            groupEnd.classList.add('field-disabled'); // Szare, nieaktywne
-            groupEnd.querySelector('input').value = ''; // Czyść wartość
+        // Logika ukrywania pól (Rata/Koniec)
+        // Dotyczy zarówno prywatnych (karta/limit) jak i firmowych (f_karta/f_limit)
+        if (type === 'karta' || type === 'limit' || type === 'f_karta' || type === 'f_limit') {
+            groupEnd.classList.add('field-disabled'); 
+            groupEnd.querySelector('input').value = ''; 
             
-            groupRate.classList.add('field-disabled'); // Szare, nieaktywne
-            groupRate.querySelector('input').value = ''; // Czyść wartość
+            groupRate.classList.add('field-disabled'); 
+            groupRate.querySelector('input').value = ''; 
         } 
         else if (type === 'inne') {
-            // Inne: Pokaż specjalne pola, ukryj standardowe
             standardContainer.classList.add('hidden');
             otherContainer.classList.remove('hidden');
+            row.classList.remove('firm-row');
         }
     }
 
     function removeRow(id) {
         const row = document.getElementById(`row_${id}`);
-        if (row) {
-            row.remove();
-        }
+        if (row) row.remove();
     }
 
-    // --- LOGIKA WYSYŁKI (MAPOWANIE DANYCH DO FORMATU SKRYPTU) ---
+    // --- WYSYŁKA ---
     document.getElementById('bafDebtForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         if (document.getElementById('website_hp').value !== "") return;
@@ -370,73 +402,105 @@
         msg.style.display = 'none';
 
         try {
-            // 1. Zbieramy dane statyczne
             const formData = new FormData(document.forms['bafDebtForm']);
             const payload = {
                 doradca: formData.get('doradca'),
                 imie_nazwisko: formData.get('imie_nazwisko'),
                 uwagi: formData.get('uwagi'),
-                alimenty: "" // To wypełnimy dynamicznie z typu 'inne'
+                alimenty: "" 
             };
 
-            // 2. Iterujemy po wierszach i sortujemy do odpowiednich kubełków
-            // Skrypt oczekuje: bank1..10 (kredyty), karta1..5, limit1..5
+            // Liczniki dla każdej kategorii (także firmowej)
+            let idx_loan = 0;
+            let idx_card = 0;
+            let idx_limit = 0;
+            let idx_floan = 0;
+            let idx_fcard = 0;
+            let idx_flimit = 0;
             
-            let creditIdx = 0;
-            let cardIdx = 0;
-            let limitIdx = 0;
-            
-            let otherObligationsText = []; // Tu zbieramy "Inne"
+            let otherObligationsText = [];
 
             const rows = document.querySelectorAll('.dynamic-row');
             
             rows.forEach(row => {
-                // Pobieramy ID z wiersza (np. row_5 -> 5)
                 const id = row.id.split('_')[1]; 
                 const type = document.getElementById(`type_${id}`).value;
                 
+                // Helper do pobierania wartości
+                const v = (sel) => row.querySelector(sel).value;
+
+                // Mapowanie w zależności od typu
                 if (type === 'kredyt') {
-                    creditIdx++;
-                    if (creditIdx <= 10) {
-                        payload[`bank${creditIdx}`] = row.querySelector('.input-bank').value;
-                        payload[`kwota${creditIdx}`] = row.querySelector('.input-amount').value;
-                        payload[`waluta${creditIdx}`] = row.querySelector('.input-currency').value;
-                        payload[`data${creditIdx}`] = row.querySelector('.input-date-start').value;
-                        payload[`koniec${creditIdx}`] = row.querySelector('.input-date-end').value;
-                        payload[`saldo${creditIdx}`] = row.querySelector('.input-balance').value;
-                        payload[`rata${creditIdx}`] = row.querySelector('.input-rate').value;
-                    }
+                    idx_loan++;
+                    let i = idx_loan;
+                    payload[`bank${i}`] = v('.input-bank');
+                    payload[`kwota${i}`] = v('.input-amount');
+                    payload[`waluta${i}`] = v('.input-currency');
+                    payload[`data${i}`] = v('.input-date-start');
+                    payload[`koniec${i}`] = v('.input-date-end');
+                    payload[`saldo${i}`] = v('.input-balance');
+                    payload[`rata${i}`] = v('.input-rate');
+                    // Dodatkowe pole 'rodzaj' (jeśli szablon używa)
+                    payload[`rodzaj${i}`] = "Kredyt Prywatny";
+
                 } else if (type === 'karta') {
-                    cardIdx++;
-                    if (cardIdx <= 5) {
-                        payload[`karta${cardIdx}`] = row.querySelector('.input-bank').value;
-                        payload[`kwotakk${cardIdx}`] = row.querySelector('.input-amount').value; // Limit karty
-                        payload[`datakk${cardIdx}`] = row.querySelector('.input-date-start').value;
-                        payload[`saldokk${cardIdx}`] = row.querySelector('.input-balance').value;
-                    }
+                    idx_card++;
+                    let i = idx_card;
+                    payload[`karta${i}`] = v('.input-bank');
+                    payload[`kwotakk${i}`] = v('.input-amount'); 
+                    payload[`datakk${i}`] = v('.input-date-start');
+                    payload[`saldokk${i}`] = v('.input-balance');
+
                 } else if (type === 'limit') {
-                    limitIdx++;
-                    if (limitIdx <= 5) {
-                        payload[`limit${limitIdx}`] = row.querySelector('.input-bank').value;
-                        payload[`kwotalimit${limitIdx}`] = row.querySelector('.input-amount').value; // Limit w koncie
-                        payload[`datalimit${limitIdx}`] = row.querySelector('.input-date-start').value;
-                        payload[`saldolimit${limitIdx}`] = row.querySelector('.input-balance').value;
-                    }
+                    idx_limit++;
+                    let i = idx_limit;
+                    payload[`limit${i}`] = v('.input-bank');
+                    payload[`kwotalimit${i}`] = v('.input-amount');
+                    payload[`datalimit${i}`] = v('.input-date-start');
+                    payload[`saldolimit${i}`] = v('.input-balance');
+
+                } else if (type === 'f_kredyt') {
+                    idx_floan++;
+                    let i = idx_floan;
+                    // Klucze z prefixem 'f'
+                    payload[`fbank${i}`] = v('.input-bank');
+                    payload[`fkwota${i}`] = v('.input-amount');
+                    payload[`fwaluta${i}`] = v('.input-currency');
+                    payload[`fdata${i}`] = v('.input-date-start');
+                    payload[`fkoniec${i}`] = v('.input-date-end');
+                    payload[`fsaldo${i}`] = v('.input-balance');
+                    payload[`frata${i}`] = v('.input-rate');
+                    payload[`frodzaj${i}`] = "Kredyt Firmowy";
+
+                } else if (type === 'f_karta') {
+                    idx_fcard++;
+                    let i = idx_fcard;
+                    payload[`fkarta${i}`] = v('.input-bank');
+                    payload[`fkwotakk${i}`] = v('.input-amount');
+                    payload[`fdatakk${i}`] = v('.input-date-start');
+                    payload[`fsaldokk${i}`] = v('.input-balance');
+
+                } else if (type === 'f_limit') {
+                    idx_flimit++;
+                    let i = idx_flimit;
+                    payload[`flimit${i}`] = v('.input-bank');
+                    payload[`fkwotalimit${i}`] = v('.input-amount');
+                    payload[`fdatalimit${i}`] = v('.input-date-start');
+                    payload[`fsaldolimit${i}`] = v('.input-balance');
+
                 } else if (type === 'inne') {
-                    const desc = row.querySelector('.input-other-desc').value;
-                    const amt = row.querySelector('.input-other-amount').value;
+                    const desc = v('.input-other-desc');
+                    const amt = v('.input-other-amount');
                     if (desc || amt) {
                         otherObligationsText.push(`${desc} (Kwota: ${amt})`);
                     }
                 }
             });
 
-            // Przypisz zebrane "Inne" do pola alimenty (bo to jedyne pole tekstowe na inne zobowiązania w szablonie)
             if (otherObligationsText.length > 0) {
                 payload['alimenty'] = otherObligationsText.join(", ");
             }
 
-            // 3. Wysyłka JSON
             const response = await fetch(scriptURL, {
                 method: 'POST',
                 body: JSON.stringify(payload)
@@ -450,9 +514,6 @@
             if (result.result === 'success') {
                 msg.className = 'success';
                 msg.innerHTML = `<strong>Sukces!</strong> Zobowiązania zostały przesłane. <br> <a href="${result.link}" target="_blank">Zobacz utworzony plik</a>`;
-                // Opcjonalnie: document.forms['bafDebtForm'].reset(); 
-                // document.getElementById('obligations_container').innerHTML = '';
-                // addNewObligation();
             } else {
                 throw new Error(result.error || "Nieznany błąd serwera.");
             }
