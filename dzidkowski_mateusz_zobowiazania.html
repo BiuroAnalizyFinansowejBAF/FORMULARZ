@@ -58,13 +58,9 @@
         input:focus, select:focus, textarea:focus { border-color: var(--accent-color); outline: none; box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2); }
         textarea { resize: vertical; min-height: 100px; }
 
-        /* Fields Disabled Style */
         .field-disabled label { color: var(--disabled-text); }
-        .field-disabled input, .field-disabled select { 
-            background-color: var(--disabled-bg); color: var(--disabled-text); border-color: #e2e8f0; pointer-events: none; 
-        }
+        .field-disabled input, .field-disabled select { background-color: var(--disabled-bg); color: var(--disabled-text); border-color: #e2e8f0; pointer-events: none; }
 
-        /* Firm Row Style */
         .dynamic-row.firm-row { background-color: var(--firm-bg); border-color: var(--firm-border); }
         .dynamic-row.firm-row .row-top-bar { background-color: #fffaf0; border-color: #fbd38d; }
         .firm-badge { display: none; background: #ed8936; color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; margin-left: 10px; text-transform: uppercase; }
@@ -84,7 +80,6 @@
         .add-btn { background-color: transparent; border: 2px dashed var(--accent-color); color: var(--accent-color); padding: 15px; width: 100%; border-radius: var(--border-radius); font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 10px; font-size: 1rem; }
         .add-btn:hover { background-color: #ebf8ff; border-style: solid; }
 
-        /* Upload Styles */
         .file-upload-wrapper { border: 2px dashed #cbd5e0; padding: 20px; background: #f8fafc; text-align: center; border-radius: var(--border-radius); transition: all 0.3s; }
         .file-upload-wrapper:hover { border-color: var(--accent-color); background: #edf2f7; }
         input[type="file"] { display: none; }
@@ -95,12 +90,10 @@
         .remove-file-btn { background: transparent; color: #e53e3e; border: none; cursor: pointer; font-size: 1.1rem; padding: 0 5px; }
         .file-hint { font-size: 0.8rem; color: #718096; margin-top: 10px; }
 
-        /* Checkbox RODO */
         .checkbox-container { display: flex; align-items: flex-start; margin-bottom: 20px; padding: 15px; background-color: #f8f9fa; border-radius: var(--border-radius); border: 1px solid #e2e8f0; margin-top: 30px; }
         .checkbox-container input[type="checkbox"] { margin-top: 4px; margin-right: 12px; width: 20px; height: 20px; flex-shrink: 0; cursor: pointer; }
         .checkbox-container label { margin-bottom: 0; font-size: 0.9rem; color: var(--text-color); cursor: pointer; line-height: 1.4; }
 
-        /* Footer & Loading */
         .legal-note { font-size: 0.75rem; color: #718096; margin-top: 15px; line-height: 1.5; text-align: justify; }
         .legal-note a { color: var(--accent-color); text-decoration: none; }
         .company-stamp { text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0; color: #4a5568; font-size: 0.9rem; line-height: 1.6; }
@@ -116,7 +109,8 @@
         .spinner { width: 60px; height: 60px; border: 6px solid #e2e8f0; border-top: 6px solid var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 25px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .loading-title { font-size: 1.5rem; color: var(--primary-color); font-weight: bold; margin-bottom: 10px; }
-        
+        .loading-subtitle { font-size: 1rem; color: #4a5568; max-width: 500px; line-height: 1.5; }
+
         #message { display: none; margin-top: 20px; padding: 15px; border-radius: var(--border-radius); text-align: center; }
         .success { background-color: #c6f6d5; color: #22543d; border: 1px solid #9ae6b4; }
         .error { background-color: #fed7d7; color: #822727; border: 1px solid #feb2b2; }
@@ -132,7 +126,7 @@
 <div id="loadingOverlay" class="loading-overlay">
     <div class="spinner"></div>
     <div class="loading-title">Trwa bezpieczne wysyłanie danych...</div>
-    <div class="loading-subtitle">Prosimy o chwilę cierpliwości. Proces może potrwać od 15 do 60 sekund w zależności od załączników. Nie zamykaj tej karty.</div>
+    <div class="loading-subtitle">Prosimy o chwilę cierpliwości. Proces może potrwać od 15 do 60 sekund w zależności od wielkości załączników. Nie zamykaj tej karty.</div>
 </div>
 
 <div class="container">
@@ -153,7 +147,7 @@
     </header>
 
     <form id="bafDebtForm">
-        <input type="hidden" id="scriptUrl" value="https://script.google.com/macros/s/AKfycbzraCkxMZfkSJzJINEdF2Cfk6rt0Gh4arjZhXn9JhJBB-mKvP-tsUHviYykxCuJkHC3Dw/exec">
+        <input type="hidden" id="scriptUrl" value="https://script.google.com/macros/s/AKfycbzhbkS7woEm8OhmlYdlSj9Ri4VESPOYko5Cmyv0p6WFlsGbaJYKeDhUKUb5bCfI3LHPbQ/exec">
         <input type="hidden" name="doradca" value="Mateusz Dzidkowski">
 
         <div style="opacity: 0; position: absolute; top: 0; left: 0; height: 0; width: 0; z-index: -1;">
@@ -433,13 +427,11 @@
             const rawFormData = new FormData(document.forms['bafDebtForm']);
             const formDataObj = {};
             
-            // Pobierz pola statyczne (doradca, imie, uwagi)
             formDataObj['doradca'] = rawFormData.get('doradca');
             formDataObj['imie_nazwisko'] = rawFormData.get('imie_nazwisko');
             formDataObj['uwagi'] = rawFormData.get('uwagi');
             formDataObj['alimenty'] = "";
 
-            // Dynamiczne zbieranie danych z wierszy
             let idx_loan = 0, idx_card = 0, idx_limit = 0, idx_floan = 0, idx_fcard = 0, idx_flimit = 0;
             let otherObligationsText = [];
 
@@ -495,13 +487,11 @@
                 formDataObj['alimenty'] = otherObligationsText.join(", ");
             }
 
-            // Przygotowanie plików
             let filesData = [];
             if (accumulatedFiles.length > 0) {
                 filesData = await Promise.all(accumulatedFiles.map(file => getBase64(file)));
             }
 
-            // Wysyłka kompletna
             const response = await fetch(scriptURL, {
                 method: 'POST',
                 body: JSON.stringify({ formData: formDataObj, files: filesData })
