@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formularz Zobowiązań BAF - Mateusz Dzidkowski</title>
+    <link rel="icon" type="image/png" href="baf_logo_p.png">
+    <style>
+        :root { 
+            --primary-color: #1a365d; 
+            --accent-color: #2b6cb0; 
+            --bg-color: #f7fafc; 
+            --white: #ffffff; 
+            --text-color: #2d3748; 
+            --border-radius: 8px; 
+            --remove-color: #e53e3e; 
+            --disabled-bg: #edf2f7;
+            --disabled-text: #a0aec0;
+            --firm-bg: #fffaf0;
+            --firm-border: #ed8936;
+        }
+        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .container { background: var(--white); width: 100%; max-width: 950px; padding: 40px; border-radius: var(--border-radius); box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: relative; }
+        
+        .logo-link { position: absolute; top: 30px; right: 40px; display: block; transition: transform 0.2s; }
+        .logo-link:hover { transform: scale(1.05); }
+        .logo { width: 120px; height: auto; display: block; }
+
+        header { margin-bottom: 40px; padding-right: 140px; }
+        h1 { color: var(--primary-color); font-size: 24px; margin-bottom: 10px; }
+        h2 { font-size: 16px; color: #718096; font-weight: 400; margin-top: 0; }
+        
+        /* Opiekun Info */
+        .advisor-info { display: inline-block; background-color: #ebf8ff; color: var(--accent-color); padding: 8px 12px; border-radius: 4px; font-size: 0.95em; margin-top: 10px; line-height: 1.4; transition: background-color 0.2s; }
+        .advisor-info:hover { background-color: #bee3f8; }
+        .advisor-link { text-decoration: none; color: inherit; display: block; cursor: pointer; }
+        .advisor-name { font-weight: 700; display: block; }
+        .advisor-title { font-weight: 400; font-size: 0.9em; opacity: 0.9; }
+
+        .form-section { margin-bottom: 30px; border-bottom: 1px solid #e2e8f0; padding-bottom: 20px; }
+        .form-section h3 { color: var(--primary-color); font-size: 18px; margin-bottom: 20px; border-left: 4px solid var(--accent-color); padding-left: 10px; display: flex; justify-content: space-between; align-items: center; }
+        
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        
+        @media (max-width: 768px) { 
+            .grid, .grid-3 { grid-template-columns: 1fr; } 
+            .logo-link { position: static; margin-bottom: 20px; display: inline-block; }
+            header { padding-right: 0; } 
+        }
+
+        .form-group { margin-bottom: 15px; position: relative; }
+        label { display: block; margin-bottom: 6px; font-weight: 500; font-size: 0.85rem; color: #4a5568; }
+        
+        input[type="text"], input[type="number"], input[type="date"], select, textarea { 
+            width: 100%; padding: 10px 12px; border: 1px solid #cbd5e0; border-radius: var(--border-radius); 
+            font-size: 0.95rem; transition: border-color 0.3s, background-color 0.3s; box-sizing: border-box; 
+        }
+        input:focus, select:focus, textarea:focus { border-color: var(--accent-color); outline: none; box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2); }
+        textarea { resize: vertical; min-height: 100px; }
+
+        /* STYL DLA PÓL NIEAKTYWNYCH */
+        .field-disabled label { color: var(--disabled-text); }
+        .field-disabled input, .field-disabled select { 
+            background-color: var(--disabled-bg); 
+            color: var(--disabled-text); 
+            border-color: #e2e8f0;
+            pointer-events: none; 
+        }
+
+        /* STYL DLA FIRMOWYCH */
+        .dynamic-row.firm-row {
+            background-color: var(--firm-bg);
+            border-color: var(--firm-border);
+        }
+        .dynamic-row.firm-row .row-top-bar {
+            background-color: #fffaf0;
+            border-color: #fbd38d;
+        }
+        .firm-badge {
+            display: none;
+            background: #ed8936; color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; margin-left: 10px; text-transform: uppercase;
+        }
+        .dynamic-row.firm-row .firm-badge { display: inline-block; }
+        
+        /* Dynamiczne wiersze */
+        .dynamic-row { 
+            background-color: #fff; 
+            border: 1px solid #e2e8f0; 
+            padding: 25px; 
+            border-radius: var(--border-radius); 
+            margin-bottom: 20px; 
+            position: relative; 
+            transition: all 0.3s; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .dynamic-row:hover { border-color: #bee3f8; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        
+        /* Header wiersza z wyborem typu */
+        .row-top-bar {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
+            background: #f7fafc; padding: 15px; border-radius: 6px; border: 1px solid #edf2f7;
+        }
+        
+        .type-select-container { flex-grow: 1; max-width: 500px; }
+        .type-select-label { font-size: 0.8rem; color: var(--accent-color); font-weight: 700; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .type-select { border: 2px solid var(--accent-color) !important; font-weight: 600; color: var(--primary-color); }
+
+        .remove-btn { 
+            background: white; border: 1px solid #fed7d7; color: var(--remove-color); 
+            font-size: 0.85rem; cursor: pointer; padding: 8px 12px; border-radius: 4px; 
+            transition: all 0.2s; display: flex; align-items: center; gap: 6px; font-weight: 600;
+        }
+        .remove-btn:hover { background-color: #fff5f5; border-color: var(--remove-color); transform: translateY(-1px); }
+
+        .add-btn { 
+            background-color: transparent; border: 2px dashed var(--accent-color); color: var(--accent-color); 
+            padding: 15px; width: 100%; border-radius: var(--border-radius); font-weight: 600; 
+            cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; 
+            gap: 10px; margin-top: 10px; font-size: 1rem;
+        }
+        .add-btn:hover { background-color: #ebf8ff; border-style: solid; }
+
+        /* STOPKA I PRAWNE */
+        .legal-note { font-size: 0.75rem; color: #718096; margin-top: 15px; line-height: 1.5; text-align: justify; }
+        .legal-note a { color: var(--accent-color); text-decoration: none; }
+        .legal-note a:hover { text-decoration: underline; }
+        
+        .company-stamp { text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0; color: #4a5568; font-size: 0.9rem; line-height: 1.6; }
+        .company-name { font-weight: 700; color: var(--primary-color); text-transform: uppercase; letter-spacing: 0.5px; }
+        .company-website { margin-top: 8px; display: inline-block; }
+        .company-website a { color: var(--accent-color); text-decoration: none; font-weight: 600; border-bottom: 1px dashed var(--accent-color); padding-bottom: 2px; transition: all 0.2s; }
+        .company-website a:hover { border-bottom-style: solid; color: var(--primary-color); }
+        .footer-copy { text-align: center; font-size: 0.75rem; color: #cbd5e0; margin-top: 20px; }
+
+        /* Loading i Submit */
+        .submit-btn { background-color: var(--primary-color); color: white; border: none; padding: 15px 30px; font-size: 18px; border-radius: var(--border-radius); cursor: pointer; width: 100%; transition: background-color 0.3s; font-weight: bold; margin-top: 20px; }
+        .submit-btn:hover { background-color: var(--accent-color); }
+        
+        .loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.95); z-index: 9999; justify-content: center; align-items: center; flex-direction: column; text-align: center; padding: 20px; }
+        .spinner { width: 60px; height: 60px; border: 6px solid #e2e8f0; border-top: 6px solid var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 25px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .loading-title { font-size: 1.5rem; color: var(--primary-color); font-weight: bold; margin-bottom: 10px; }
+        .loading-subtitle { font-size: 1rem; color: #4a5568; max-width: 500px; line-height: 1.5; }
+
+        #message { display: none; margin-top: 20px; padding: 15px; border-radius: var(--border-radius); text-align: center; }
+        .success { background-color: #c6f6d5; color: #22543d; border: 1px solid #9ae6b4; }
+        .error { background-color: #fed7d7; color: #822727; border: 1px solid #feb2b2; }
+        
+        .security-badge { display: flex; align-items: center; justify-content: center; background-color: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; padding: 8px 15px; border-radius: 50px; font-size: 0.8rem; margin: 20px auto; width: fit-content; gap: 8px; }
+        .security-badge svg { width: 14px; height: 14px; fill: currentColor; }
+
+        /* Ukrywanie pól */
+        .hidden { display: none; }
+        
+        /* Optyczne grupowanie w select */
+        optgroup { font-weight: bold; color: #2d3748; }
+    </style>
+</head>
+<body>
+
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="spinner"></div>
+    <div class="loading-title">Trwa bezpieczne wysyłanie danych...</div>
+    <div class="loading-subtitle">Prosimy o chwilę cierpliwości. Proces może potrwać od 15 do 60 sekund. Nie zamykaj tej karty.</div>
+</div>
+
+<div class="container">
+    <a href="https://biuroanalizyfinansowej.pl/" target="_blank" class="logo-link" title="Przejdź na stronę główną">
+        <img src="baf_logo.png" alt="Logo BAF" class="logo">
+    </a>
+
+    <header>
+        <h1>Formularz Zobowiązań Kredytowych</h1>
+        <h2>Uzupełnij dane dotyczące aktualnych zobowiązań finansowych.</h2>
+        
+        <div class="advisor-info">
+            <a href="https://q-r.to/MateuszDzidkowskiBiuroBAF" target="_blank" class="advisor-link" title="Kliknij, aby zobaczyć wizytówkę">
+                <span class="advisor-name">Twój opiekun: Mateusz Dzidkowski</span>
+                <span class="advisor-title">Właściciel</span>
+            </a>
+        </div>
+    </header>
+
+    <form id="bafDebtForm">
+        <input type="hidden" id="scriptUrl" value="https://script.google.com/macros/s/AKfycbzraCkxMZfkSJzJINEdF2Cfk6rt0Gh4arjZhXn9JhJBB-mKvP-tsUHviYykxCuJkHC3Dw/exec">
+        <input type="hidden" name="doradca" value="Mateusz Dzidkowski">
+
+        <div style="opacity: 0; position: absolute; top: 0; left: 0; height: 0; width: 0; z-index: -1;">
+            <input type="text" id="website_hp" name="website_hp" tabindex="-1" autocomplete="off">
+        </div>
+
+        <div class="form-section">
+            <h3>Dane Identyfikacyjne</h3>
+            <div class="grid">
+                <div class="form-group"><label>Imię i Nazwisko Klienta</label><input type="text" name="imie_nazwisko" required placeholder="np. Jan Kowalski"></div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3>Twoje Zobowiązania</h3>
+            <p style="font-size: 0.9rem; color: #718096; margin-bottom: 20px;">Dodaj po kolei wszystkie aktywne zobowiązania. Wybierz odpowiedni rodzaj (Prywatne/Firmowe) dla każdej pozycji.</p>
+            
+            <div id="obligations_container"></div>
+
+            <button type="button" class="add-btn" onclick="addNewObligation()">
+                <span>+ Dodaj kolejne zobowiązanie</span>
+            </button>
+        </div>
+
+        <div class="form-section">
+            <h3>Dodatkowe Informacje</h3>
+            <div class="form-group">
+                <label>Dodatkowe wyjaśnienia lub informacje</label>
+                <textarea name="uwagi" placeholder="Np. informacja o spłaconych kredytach, które widnieją w BIK, planowane zamknięcie kart, zaległości w ZUS/US lub pożyczki prywatne."></textarea>
+            </div>
+        </div>
+
+        <div class="security-badge">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+            <span>Połączenie szyfrowane SSL. Twoje dane są bezpieczne.</span>
+        </div>
+
+        <button type="submit" class="submit-btn" id="btnSubmit">Wyślij Zestawienie</button>
+        
+        <div class="legal-note">
+            Administratorem Twoich danych osobowych jest Biuro Analizy finansowej Mateusz Dzidkowski z siedzibą w Krakowie. Twoje dane wpisane w formularzu będą przetwarzane wyłącznie w celu przygotowania wniosku i procesowania (zgodnie z art. 6 ust. 1 lit. f RODO – prawnie uzasadniony interes administratora). Pełną informację o Twoich prawach (m.in. dostępu do danych, ich sprostowania czy usunięcia) znajdziesz w naszej <a href="https://biuroanalizyfinansowej.pl/polityka-prywatnosci/" target="_blank">Polityce Prywatności</a>.
+        </div>
+
+        <div class="company-stamp">
+            <div class="company-name">BIURO ANALIZY FINANSOWEJ MATEUSZ DZIDKOWSKI</div>
+            <div>30-719 Kraków, ul. Gromadzka 103A lok. 2</div>
+            <div>NIP: 6612281631 &nbsp; REGON: 381984834</div>
+            <div class="company-website">
+                <a href="https://biuroanalizyfinansowej.pl/" target="_blank">biuroanalizyfinansowej.pl</a>
+            </div>
+        </div>
+
+        <div class="footer-copy">
+            Biuro Analizy Finansowej 2025 © Wszelkie prawa zastrzeżone.
+        </div>
+
+        <div id="message"></div>
+    </form>
+</div>
+
+<script>
+    let rowCounter = 0;
+
+    // Inicjalizacja - dodaj jeden pusty wiersz
+    document.addEventListener('DOMContentLoaded', function() {
+        addNewObligation();
+    });
+
+    function addNewObligation() {
+        rowCounter++;
+        const container = document.getElementById('obligations_container');
+        const div = document.createElement('div');
+        div.className = 'dynamic-row';
+        div.id = `row_${rowCounter}`;
+        
+        // Zbudowanie listy wyboru z podziałem na Firmowe/Prywatne
+        div.innerHTML = `
+            <div class="row-top-bar">
+                <div class="type-select-container">
+                    <div class="type-select-label">Rodzaj zobowiązania <span class="firm-badge">FIRMOWE</span></div>
+                    <select class="type-select" id="type_${rowCounter}" onchange="handleTypeChange(${rowCounter})">
+                        <optgroup label="Zobowiązania Prywatne (Osoba Fizyczna)">
+                            <option value="kredyt">Kredyt / Pożyczka ratalna (Prywatna)</option>
+                            <option value="karta">Karta Kredytowa (Prywatna)</option>
+                            <option value="limit">Limit w koncie (Prywatny)</option>
+                        </optgroup>
+                        <optgroup label="Zobowiązania Firmowe (Działalność)">
+                            <option value="f_kredyt_ratalny">Kredyt ratalny firmowy</option>
+                            <option value="f_leasing_operacyjny">Leasing operacyjny</option>
+                            <option value="f_leasing_finansowy">Leasing finansowy</option>
+                            <option value="f_karta">Karta Kredytowa Firmowa</option>
+                            <option value="f_limit">Limit w koncie Firmowym</option>
+                        </optgroup>
+                        <optgroup label="Inne">
+                            <option value="inne">Inne (np. alimenty, faktoring)</option>
+                        </optgroup>
+                    </select>
+                </div>
+                <button type="button" class="remove-btn" onclick="removeRow(${rowCounter})">
+                    ✕ Usuń pozycję
+                </button>
+            </div>
+
+            <div id="standard_fields_${rowCounter}" class="grid-3">
+                <div class="form-group">
+                    <label>Nazwa banku / Leasingodawcy</label>
+                    <input type="text" class="input-bank">
+                </div>
+                <div class="form-group">
+                    <label>Kwota udzielona / Limit</label>
+                    <input type="number" step="0.01" class="input-amount">
+                </div>
+                <div class="form-group">
+                    <label>Waluta</label>
+                    <select class="input-currency">
+                        <option value="PLN">PLN</option>
+                        <option value="EUR">EUR</option>
+                        <option value="USD">USD</option>
+                        <option value="CHF">CHF</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Data podpisania umowy</label>
+                    <input type="date" class="input-date-start">
+                </div>
+                
+                <div class="form-group field-group-end">
+                    <label>Data końca umowy</label>
+                    <input type="date" class="input-date-end">
+                </div>
+                
+                <div class="form-group">
+                    <label>Bieżące saldo (do spłaty)</label>
+                    <input type="number" step="0.01" class="input-balance">
+                </div>
+                
+                <div class="form-group field-group-rate">
+                    <label>Bieżąca rata</label>
+                    <input type="number" step="0.01" class="input-rate">
+                </div>
+            </div>
+
+            <div id="other_fields_${rowCounter}" class="hidden">
+                <div class="form-group">
+                    <label>Opis zobowiązania (rodzaj, nazwa wierzyciela)</label>
+                    <input type="text" class="input-other-desc" placeholder="np. Alimenty na córkę, Faktoring">
+                </div>
+                <div class="form-group">
+                    <label>Miesięczna kwota zobowiązania</label>
+                    <input type="number" step="0.01" class="input-other-amount" placeholder="np. 500">
+                </div>
+            </div>
+        `;
+        container.appendChild(div);
+        handleTypeChange(rowCounter);
+    }
+
+    function handleTypeChange(id) {
+        const type = document.getElementById(`type_${id}`).value;
+        const row = document.getElementById(`row_${id}`);
+        const standardContainer = document.getElementById(`standard_fields_${id}`);
+        const otherContainer = document.getElementById(`other_fields_${id}`);
+        
+        const groupEnd = standardContainer.querySelector('.field-group-end');
+        const groupRate = standardContainer.querySelector('.field-group-rate');
+
+        // Reset widoczności i stylów
+        standardContainer.classList.remove('hidden');
+        otherContainer.classList.add('hidden');
+        groupEnd.classList.remove('field-disabled');
+        groupRate.classList.remove('field-disabled');
+        
+        // Obsługa stylu "Firmowy"
+        if (type.startsWith('f_')) {
+            row.classList.add('firm-row');
+        } else {
+            row.classList.remove('firm-row');
+        }
+
+        // Logika ukrywania pól (Rata/Koniec) dla kart i limitów
+        if (type === 'karta' || type === 'limit' || type === 'f_karta' || type === 'f_limit') {
+            groupEnd.classList.add('field-disabled'); 
+            groupEnd.querySelector('input').value = ''; 
+            
+            groupRate.classList.add('field-disabled'); 
+            groupRate.querySelector('input').value = ''; 
+        } 
+        else if (type === 'inne') {
+            standardContainer.classList.add('hidden');
+            otherContainer.classList.remove('hidden');
+            row.classList.remove('firm-row');
+        }
+    }
+
+    function removeRow(id) {
+        const row = document.getElementById(`row_${id}`);
+        if (row) row.remove();
+    }
+
+    // --- WYSYŁKA ---
+    document.getElementById('bafDebtForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        if (document.getElementById('website_hp').value !== "") return;
+
+        const btn = document.getElementById('btnSubmit');
+        const overlay = document.getElementById('loadingOverlay');
+        const msg = document.getElementById('message');
+        const scriptURL = document.getElementById('scriptUrl').value;
+
+        if (scriptURL.includes("TUTAJ") || scriptURL === "") {
+            alert("Błąd konfiguracji URL.");
+            return;
+        }
+
+        btn.disabled = true;
+        overlay.style.display = 'flex';
+        msg.style.display = 'none';
+
+        try {
+            const formData = new FormData(document.forms['bafDebtForm']);
+            const payload = {
+                doradca: formData.get('doradca'),
+                imie_nazwisko: formData.get('imie_nazwisko'),
+                uwagi: formData.get('uwagi'),
+                alimenty: "" 
+            };
+
+            // Liczniki dla każdej kategorii
+            let idx_loan = 0;
+            let idx_card = 0;
+            let idx_limit = 0;
+            let idx_floan = 0;
+            let idx_fcard = 0;
+            let idx_flimit = 0;
+            
+            let otherObligationsText = [];
+
+            const rows = document.querySelectorAll('.dynamic-row');
+            
+            rows.forEach(row => {
+                const id = row.id.split('_')[1]; 
+                const type = document.getElementById(`type_${id}`).value;
+                
+                // Helper do pobierania wartości
+                const v = (sel) => row.querySelector(sel).value;
+
+                // --- PRYWATNE ---
+                if (type === 'kredyt') {
+                    idx_loan++;
+                    let i = idx_loan;
+                    payload[`bank${i}`] = v('.input-bank');
+                    payload[`kwota${i}`] = v('.input-amount');
+                    payload[`waluta${i}`] = v('.input-currency');
+                    payload[`data${i}`] = v('.input-date-start');
+                    payload[`koniec${i}`] = v('.input-date-end');
+                    payload[`saldo${i}`] = v('.input-balance');
+                    payload[`rata${i}`] = v('.input-rate');
+                    payload[`rodzaj${i}`] = "Kredyt Prywatny";
+
+                } else if (type === 'karta') {
+                    idx_card++;
+                    let i = idx_card;
+                    payload[`karta${i}`] = v('.input-bank');
+                    payload[`kwotakk${i}`] = v('.input-amount'); 
+                    payload[`datakk${i}`] = v('.input-date-start');
+                    payload[`saldokk${i}`] = v('.input-balance');
+
+                } else if (type === 'limit') {
+                    idx_limit++;
+                    let i = idx_limit;
+                    payload[`limit${i}`] = v('.input-bank');
+                    payload[`kwotalimit${i}`] = v('.input-amount');
+                    payload[`datalimit${i}`] = v('.input-date-start');
+                    payload[`saldolimit${i}`] = v('.input-balance');
+
+                // --- FIRMOWE ---
+                } else if (type === 'f_kredyt_ratalny' || type === 'f_leasing_operacyjny' || type === 'f_leasing_finansowy') {
+                    idx_floan++;
+                    let i = idx_floan;
+                    payload[`fbank${i}`] = v('.input-bank');
+                    payload[`fkwota${i}`] = v('.input-amount');
+                    payload[`fwaluta${i}`] = v('.input-currency');
+                    payload[`fdata${i}`] = v('.input-date-start');
+                    payload[`fkoniec${i}`] = v('.input-date-end');
+                    payload[`fsaldo${i}`] = v('.input-balance');
+                    payload[`frata${i}`] = v('.input-rate');
+                    
+                    if (type === 'f_kredyt_ratalny') payload[`frodzaj${i}`] = "Kredyt Ratalny Firmowy";
+                    if (type === 'f_leasing_operacyjny') payload[`frodzaj${i}`] = "Leasing Operacyjny";
+                    if (type === 'f_leasing_finansowy') payload[`frodzaj${i}`] = "Leasing Finansowy";
+
+                } else if (type === 'f_karta') {
+                    idx_fcard++;
+                    let i = idx_fcard;
+                    payload[`fkarta${i}`] = v('.input-bank');
+                    payload[`fkwotakk${i}`] = v('.input-amount');
+                    payload[`fdatakk${i}`] = v('.input-date-start');
+                    payload[`fsaldokk${i}`] = v('.input-balance');
+
+                } else if (type === 'f_limit') {
+                    idx_flimit++;
+                    let i = idx_flimit;
+                    payload[`flimit${i}`] = v('.input-bank');
+                    payload[`fkwotalimit${i}`] = v('.input-amount');
+                    payload[`fdatalimit${i}`] = v('.input-date-start');
+                    payload[`fsaldolimit${i}`] = v('.input-balance');
+
+                // --- INNE ---
+                } else if (type === 'inne') {
+                    const desc = v('.input-other-desc');
+                    const amt = v('.input-other-amount');
+                    if (desc || amt) {
+                        otherObligationsText.push(`${desc} (Kwota: ${amt})`);
+                    }
+                }
+            });
+
+            if (otherObligationsText.length > 0) {
+                payload['alimenty'] = otherObligationsText.join(", ");
+            }
+
+            const response = await fetch(scriptURL, {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+
+            overlay.style.display = 'none';
+            msg.style.display = 'block';
+
+            if (result.result === 'success') {
+                msg.className = 'success';
+                msg.innerHTML = `<strong>Sukces!</strong> Zobowiązania zostały przesłane. <br> <a href="${result.link}" target="_blank">Zobacz utworzony plik</a>`;
+            } else {
+                throw new Error(result.error || "Nieznany błąd serwera.");
+            }
+
+        } catch (error) {
+            overlay.style.display = 'none';
+            msg.style.display = 'block';
+            msg.className = 'error';
+            msg.innerHTML = 'Wystąpił błąd: ' + error.message;
+            btn.disabled = false;
+        }
+    });
+</script>
+
+</body>
+</html>
