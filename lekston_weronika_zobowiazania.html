@@ -271,12 +271,14 @@
                             <option value="limit">Limit w koncie (Prywatny)</option>
                         </optgroup>
                         <optgroup label="Zobowiązania Firmowe (Działalność)">
-                            <option value="f_kredyt">Kredyt Firmowy / Leasing</option>
+                            <option value="f_kredyt_ratalny">Kredyt ratalny firmowy</option>
+                            <option value="f_leasing_operacyjny">Leasing operacyjny</option>
+                            <option value="f_leasing_finansowy">Leasing finansowy</option>
                             <option value="f_karta">Karta Kredytowa Firmowa</option>
                             <option value="f_limit">Limit w koncie Firmowym</option>
                         </optgroup>
                         <optgroup label="Inne">
-                            <option value="inne">Inne (np. alimenty)</option>
+                            <option value="inne">Inne (np. alimenty, faktoring)</option>
                         </optgroup>
                     </select>
                 </div>
@@ -287,7 +289,7 @@
 
             <div id="standard_fields_${rowCounter}" class="grid-3">
                 <div class="form-group">
-                    <label>Nazwa banku</label>
+                    <label>Nazwa banku / Leasingodawcy</label>
                     <input type="text" class="input-bank">
                 </div>
                 <div class="form-group">
@@ -327,7 +329,7 @@
             <div id="other_fields_${rowCounter}" class="hidden">
                 <div class="form-group">
                     <label>Opis zobowiązania (rodzaj, nazwa wierzyciela)</label>
-                    <input type="text" class="input-other-desc" placeholder="np. Alimenty na córkę">
+                    <input type="text" class="input-other-desc" placeholder="np. Alimenty na córkę, Faktoring">
                 </div>
                 <div class="form-group">
                     <label>Miesięczna kwota zobowiązania</label>
@@ -361,8 +363,7 @@
             row.classList.remove('firm-row');
         }
 
-        // Logika ukrywania pól (Rata/Koniec)
-        // Dotyczy zarówno prywatnych (karta/limit) jak i firmowych (f_karta/f_limit)
+        // Logika ukrywania pól (Rata/Koniec) dla kart i limitów (prywatnych i firmowych)
         if (type === 'karta' || type === 'limit' || type === 'f_karta' || type === 'f_limit') {
             groupEnd.classList.add('field-disabled'); 
             groupEnd.querySelector('input').value = ''; 
@@ -429,7 +430,7 @@
                 // Helper do pobierania wartości
                 const v = (sel) => row.querySelector(sel).value;
 
-                // Mapowanie w zależności od typu
+                // --- PRYWATNE ---
                 if (type === 'kredyt') {
                     idx_loan++;
                     let i = idx_loan;
@@ -440,7 +441,6 @@
                     payload[`koniec${i}`] = v('.input-date-end');
                     payload[`saldo${i}`] = v('.input-balance');
                     payload[`rata${i}`] = v('.input-rate');
-                    // Dodatkowe pole 'rodzaj' (jeśli szablon używa)
                     payload[`rodzaj${i}`] = "Kredyt Prywatny";
 
                 } else if (type === 'karta') {
@@ -459,10 +459,11 @@
                     payload[`datalimit${i}`] = v('.input-date-start');
                     payload[`saldolimit${i}`] = v('.input-balance');
 
-                } else if (type === 'f_kredyt') {
+                // --- FIRMOWE ---
+                } else if (type === 'f_kredyt_ratalny' || type === 'f_leasing_operacyjny' || type === 'f_leasing_finansowy') {
                     idx_floan++;
                     let i = idx_floan;
-                    // Klucze z prefixem 'f'
+                    // Wszystkie 3 typy mapujemy na pola 'fbank', 'fkwota' itd. (f_loans w backendzie)
                     payload[`fbank${i}`] = v('.input-bank');
                     payload[`fkwota${i}`] = v('.input-amount');
                     payload[`fwaluta${i}`] = v('.input-currency');
@@ -470,7 +471,11 @@
                     payload[`fkoniec${i}`] = v('.input-date-end');
                     payload[`fsaldo${i}`] = v('.input-balance');
                     payload[`frata${i}`] = v('.input-rate');
-                    payload[`frodzaj${i}`] = "Kredyt Firmowy";
+                    
+                    // Rozróżnienie w polu frodzaj
+                    if (type === 'f_kredyt_ratalny') payload[`frodzaj${i}`] = "Kredyt Ratalny Firmowy";
+                    if (type === 'f_leasing_operacyjny') payload[`frodzaj${i}`] = "Leasing Operacyjny";
+                    if (type === 'f_leasing_finansowy') payload[`frodzaj${i}`] = "Leasing Finansowy";
 
                 } else if (type === 'f_karta') {
                     idx_fcard++;
@@ -488,6 +493,7 @@
                     payload[`fdatalimit${i}`] = v('.input-date-start');
                     payload[`fsaldolimit${i}`] = v('.input-balance');
 
+                // --- INNE ---
                 } else if (type === 'inne') {
                     const desc = v('.input-other-desc');
                     const amt = v('.input-other-amount');
