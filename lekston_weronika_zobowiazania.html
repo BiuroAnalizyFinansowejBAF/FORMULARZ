@@ -16,7 +16,7 @@
             --remove-color: #e53e3e; 
             --disabled-bg: #edf2f7;
             --disabled-text: #a0aec0;
-            --firm-bg: #fffaf0; /* Lekki kolor dla firmowych */
+            --firm-bg: #fffaf0;
             --firm-border: #ed8936;
         }
         body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; display: flex; justify-content: center; }
@@ -57,15 +57,15 @@
             font-size: 0.95rem; transition: border-color 0.3s, background-color 0.3s; box-sizing: border-box; 
         }
         input:focus, select:focus, textarea:focus { border-color: var(--accent-color); outline: none; box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2); }
-        textarea { resize: vertical; min-height: 80px; }
+        textarea { resize: vertical; min-height: 100px; }
 
-        /* STYL DLA PÓL NIEAKTYWNYCH (CONTRAST) */
+        /* STYL DLA PÓL NIEAKTYWNYCH */
         .field-disabled label { color: var(--disabled-text); }
         .field-disabled input, .field-disabled select { 
             background-color: var(--disabled-bg); 
             color: var(--disabled-text); 
             border-color: #e2e8f0;
-            pointer-events: none; /* Blokada klikania */
+            pointer-events: none; 
         }
 
         /* STYL DLA FIRMOWYCH */
@@ -209,10 +209,10 @@
         </div>
 
         <div class="form-section">
-            <h3>Uwagi i inne</h3>
+            <h3>Dodatkowe Informacje</h3>
             <div class="form-group">
-                <label>Uwagi do wniosku</label>
-                <textarea name="uwagi" placeholder="Tutaj możesz wpisać zobowiązania publicznoprawne (ZUS/US), prywatne lub dodatkowe informacje."></textarea>
+                <label>Dodatkowe wyjaśnienia lub informacje</label>
+                <textarea name="uwagi" placeholder="Np. informacja o spłaconych kredytach, które widnieją w BIK, planowane zamknięcie kart, zaległości w ZUS/US lub pożyczki prywatne."></textarea>
             </div>
         </div>
 
@@ -363,7 +363,7 @@
             row.classList.remove('firm-row');
         }
 
-        // Logika ukrywania pól (Rata/Koniec) dla kart i limitów (prywatnych i firmowych)
+        // Logika ukrywania pól (Rata/Koniec) dla kart i limitów
         if (type === 'karta' || type === 'limit' || type === 'f_karta' || type === 'f_limit') {
             groupEnd.classList.add('field-disabled'); 
             groupEnd.querySelector('input').value = ''; 
@@ -407,11 +407,11 @@
             const payload = {
                 doradca: formData.get('doradca'),
                 imie_nazwisko: formData.get('imie_nazwisko'),
-                uwagi: formData.get('uwagi'),
+                uwagi: formData.get('uwagi'), // Teraz poprawnie pobiera uwagi z textarea
                 alimenty: "" 
             };
 
-            // Liczniki dla każdej kategorii (także firmowej)
+            // Liczniki dla każdej kategorii
             let idx_loan = 0;
             let idx_card = 0;
             let idx_limit = 0;
@@ -463,7 +463,6 @@
                 } else if (type === 'f_kredyt_ratalny' || type === 'f_leasing_operacyjny' || type === 'f_leasing_finansowy') {
                     idx_floan++;
                     let i = idx_floan;
-                    // Wszystkie 3 typy mapujemy na pola 'fbank', 'fkwota' itd. (f_loans w backendzie)
                     payload[`fbank${i}`] = v('.input-bank');
                     payload[`fkwota${i}`] = v('.input-amount');
                     payload[`fwaluta${i}`] = v('.input-currency');
