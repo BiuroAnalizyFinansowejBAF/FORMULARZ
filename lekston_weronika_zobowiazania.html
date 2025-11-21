@@ -156,13 +156,19 @@
                     <select class="type-select" id="type_${rowCounter}" onchange="handleTypeChange(${rowCounter})">
                         <optgroup label="Zobowiązania Prywatne (Osoba Fizyczna)">
                             <option value="kredyt">Kredyt / Pożyczka ratalna (Prywatna)</option>
+                            <option value="chwilowka">Chwilówka / Pozabankowe</option>
+                            <option value="allegro">Allegro Pay / PayPo / Raty 0%</option>
+                            <option value="hipoteka_prywatna">Kredyt Hipoteczny (zabezpieczony)</option>
                             <option value="karta">Karta Kredytowa (Prywatna)</option>
                             <option value="limit">Limit w koncie (Prywatny)</option>
                         </optgroup>
-                        <optgroup label="Zobowiązania Firmowe (Działalność)">
+                        <optgroup label="Zobowiązania Firmowe (Działalność / Spółka)">
                             <option value="f_kredyt_ratalny">Kredyt ratalny firmowy</option>
                             <option value="f_leasing_operacyjny">Leasing operacyjny</option>
                             <option value="f_leasing_finansowy">Leasing finansowy</option>
+                            <option value="f_hipoteka">Kredyt zabezpieczony hipoteką</option>
+                            <option value="f_inwestycyjny">Kredyt inwestycyjny</option>
+                            <option value="f_pozabankowe">Pozabankowe (np. BIZLEND)</option>
                             <option value="f_karta">Karta Kredytowa Firmowa</option>
                             <option value="f_limit">Limit w koncie Firmowym</option>
                         </optgroup>
@@ -174,8 +180,8 @@
                 <button type="button" class="remove-btn" onclick="removeRow(${rowCounter})">✕ Usuń pozycję</button>
             </div>
             <div id="standard_fields_${rowCounter}" class="grid-3">
-                <div class="form-group"><label>Nazwa banku / Leasingodawcy</label><input type="text" class="input-bank"></div>
-                <div class="form-group"><label>Kwota udzielona / Limit</label><input type="number" step="0.01" class="input-amount"></div>
+                <div class="form-group"><label>Nazwa banku / Leasingodawcy *</label><input type="text" class="input-bank" required></div>
+                <div class="form-group"><label>Kwota udzielona / Limit *</label><input type="number" step="0.01" class="input-amount" required></div>
                 <div class="form-group"><label>Waluta</label><select class="input-currency"><option value="PLN">PLN</option><option value="EUR">EUR</option><option value="USD">USD</option><option value="CHF">CHF</option></select></div>
                 <div class="form-group"><label>Aktualne oprocentowanie (%)</label><input type="number" step="0.01" class="input-interest" placeholder="np. 7.5"></div>
                 <div class="form-group"><label>Data podpisania umowy</label><input type="date" class="input-date-start"></div>
@@ -239,13 +245,16 @@
                 const type = document.getElementById(`type_${id}`).value;
                 const v = (sel) => row.querySelector(sel).value;
 
-                if (type === 'kredyt') {
+                if (type === 'kredyt' || type === 'chwilowka' || type === 'allegro' || type === 'hipoteka_prywatna') {
                     idx_loan++; let i = idx_loan;
                     formDataObj[`bank${i}`] = v('.input-bank'); formDataObj[`kwota${i}`] = v('.input-amount');
                     formDataObj[`waluta${i}`] = v('.input-currency'); formDataObj[`opr${i}`] = v('.input-interest');
                     formDataObj[`data${i}`] = v('.input-date-start'); formDataObj[`koniec${i}`] = v('.input-date-end');
                     formDataObj[`saldo${i}`] = v('.input-balance'); formDataObj[`rata${i}`] = v('.input-rate');
-                    formDataObj[`rodzaj${i}`] = "Kredyt Prywatny";
+                    if (type === 'chwilowka') formDataObj[`rodzaj${i}`] = "Chwilówka / Pozabankowe";
+                    else if (type === 'allegro') formDataObj[`rodzaj${i}`] = "Allegro Pay / PayPo / Raty 0%";
+                    else if (type === 'hipoteka_prywatna') formDataObj[`rodzaj${i}`] = "Kredyt Hipoteczny (zabezpieczony)";
+                    else formDataObj[`rodzaj${i}`] = "Kredyt Prywatny";
                 } else if (type === 'karta') {
                     idx_card++; let i = idx_card;
                     formDataObj[`karta${i}`] = v('.input-bank'); formDataObj[`kwotakk${i}`] = v('.input-amount'); 
@@ -256,15 +265,18 @@
                     formDataObj[`limit${i}`] = v('.input-bank'); formDataObj[`kwotalimit${i}`] = v('.input-amount');
                     formDataObj[`lopr${i}`] = v('.input-interest'); formDataObj[`datalimit${i}`] = v('.input-date-start');
                     formDataObj[`saldolimit${i}`] = v('.input-balance');
-                } else if (type === 'f_kredyt_ratalny' || type === 'f_leasing_operacyjny' || type === 'f_leasing_finansowy') {
+                } else if (type === 'f_kredyt_ratalny' || type === 'f_leasing_operacyjny' || type === 'f_leasing_finansowy' || type === 'f_hipoteka' || type === 'f_inwestycyjny' || type === 'f_pozabankowe') {
                     idx_floan++; let i = idx_floan;
                     formDataObj[`fbank${i}`] = v('.input-bank'); formDataObj[`fkwota${i}`] = v('.input-amount');
                     formDataObj[`fwaluta${i}`] = v('.input-currency'); formDataObj[`fopr${i}`] = v('.input-interest');
                     formDataObj[`fdata${i}`] = v('.input-date-start'); formDataObj[`fkoniec${i}`] = v('.input-date-end');
                     formDataObj[`fsaldo${i}`] = v('.input-balance'); formDataObj[`frata${i}`] = v('.input-rate');
                     if (type === 'f_kredyt_ratalny') formDataObj[`frodzaj${i}`] = "Kredyt Ratalny Firmowy";
-                    if (type === 'f_leasing_operacyjny') formDataObj[`frodzaj${i}`] = "Leasing Operacyjny";
-                    if (type === 'f_leasing_finansowy') formDataObj[`frodzaj${i}`] = "Leasing Finansowy";
+                    else if (type === 'f_leasing_operacyjny') formDataObj[`frodzaj${i}`] = "Leasing Operacyjny";
+                    else if (type === 'f_leasing_finansowy') formDataObj[`frodzaj${i}`] = "Leasing Finansowy";
+                    else if (type === 'f_hipoteka') formDataObj[`frodzaj${i}`] = "Kredyt Hipoteczny Firmowy";
+                    else if (type === 'f_inwestycyjny') formDataObj[`frodzaj${i}`] = "Kredyt Inwestycyjny";
+                    else if (type === 'f_pozabankowe') formDataObj[`frodzaj${i}`] = "Pozabankowe (np. Bizlend)";
                 } else if (type === 'f_karta') {
                     idx_fcard++; let i = idx_fcard;
                     formDataObj[`fkarta${i}`] = v('.input-bank'); formDataObj[`fkwotakk${i}`] = v('.input-amount');
