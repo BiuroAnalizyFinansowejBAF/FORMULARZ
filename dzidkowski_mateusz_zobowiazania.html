@@ -162,7 +162,7 @@
                             <option value="karta">Karta Kredytowa (Prywatna)</option>
                             <option value="limit">Limit w koncie (Prywatny)</option>
                         </optgroup>
-                        <optgroup label="Zobowiązania Firmowe (Działalność / Spółka)">
+                        <optgroup label="Zobowiązania Firmowe (Działalność)">
                             <option value="f_kredyt_ratalny">Kredyt ratalny firmowy</option>
                             <option value="f_leasing_operacyjny">Leasing operacyjny</option>
                             <option value="f_leasing_finansowy">Leasing finansowy</option>
@@ -245,13 +245,19 @@
                 const type = document.getElementById(`type_${id}`).value;
                 const v = (sel) => row.querySelector(sel).value;
 
-                if (type === 'kredyt') {
+                // !!! POPRAWIONA LOGIKA ZBIERANIA DANYCH !!!
+                if (type === 'kredyt' || type === 'chwilowka' || type === 'allegro' || type === 'hipoteka_prywatna') {
                     idx_loan++; let i = idx_loan;
                     formDataObj[`bank${i}`] = v('.input-bank'); formDataObj[`kwota${i}`] = v('.input-amount');
                     formDataObj[`waluta${i}`] = v('.input-currency'); formDataObj[`opr${i}`] = v('.input-interest');
                     formDataObj[`data${i}`] = v('.input-date-start'); formDataObj[`koniec${i}`] = v('.input-date-end');
                     formDataObj[`saldo${i}`] = v('.input-balance'); formDataObj[`rata${i}`] = v('.input-rate');
-                    formDataObj[`rodzaj${i}`] = "Kredyt Prywatny";
+                    
+                    // Trik polega na nadpisaniu pola 'rodzaj'
+                    if (type === 'chwilowka') formDataObj[`rodzaj${i}`] = "Chwilówka / Pozabankowe";
+                    else if (type === 'allegro') formDataObj[`rodzaj${i}`] = "Allegro Pay / PayPo / Raty 0%";
+                    else if (type === 'hipoteka_prywatna') formDataObj[`rodzaj${i}`] = "Kredyt Hipoteczny (zabezpieczony)";
+                    else formDataObj[`rodzaj${i}`] = "Kredyt Prywatny";
                 } else if (type === 'karta') {
                     idx_card++; let i = idx_card;
                     formDataObj[`karta${i}`] = v('.input-bank'); formDataObj[`kwotakk${i}`] = v('.input-amount'); 
@@ -268,6 +274,7 @@
                     formDataObj[`fwaluta${i}`] = v('.input-currency'); formDataObj[`fopr${i}`] = v('.input-interest');
                     formDataObj[`fdata${i}`] = v('.input-date-start'); formDataObj[`fkoniec${i}`] = v('.input-date-end');
                     formDataObj[`fsaldo${i}`] = v('.input-balance'); formDataObj[`frata${i}`] = v('.input-rate');
+                    
                     if (type === 'f_kredyt_ratalny') formDataObj[`frodzaj${i}`] = "Kredyt Ratalny Firmowy";
                     else if (type === 'f_leasing_operacyjny') formDataObj[`frodzaj${i}`] = "Leasing Operacyjny";
                     else if (type === 'f_leasing_finansowy') formDataObj[`frodzaj${i}`] = "Leasing Finansowy";
