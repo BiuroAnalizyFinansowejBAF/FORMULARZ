@@ -71,6 +71,14 @@
         #message { display: none; margin-top: 20px; padding: 15px; border-radius: var(--border-radius); text-align: center; }
         .success { background-color: #c6f6d5; color: #22543d; border: 1px solid #9ae6b4; }
         .error { background-color: #fed7d7; color: #822727; border: 1px solid #feb2b2; }
+
+        .add-source-btn { background-color: #48bb78; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 5px; transition: 0.3s; margin-bottom: 10px; font-weight: 600; }
+        .add-source-btn:hover { background-color: #38a169; }
+        .source-row { display: grid; grid-template-columns: 1.5fr 1fr 2fr 30px; gap: 10px; margin-bottom: 10px; align-items: start; background: #fff; border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; }
+        @media (max-width: 600px) { .source-row { grid-template-columns: 1fr; position: relative; } .remove-source-btn { position: absolute; top: 5px; right: 5px; } }
+        .remove-source-btn { background: #fed7d7; color: #c53030; border: none; border-radius: 4px; width: 30px; height: 38px; cursor: pointer; display: flex; justify-content: center; align-items: center; font-weight: bold; }
+        .remove-source-btn:hover { background: #feb2b2; }
+        .disabled-field { background-color: #edf2f7; color: #a0aec0; cursor: not-allowed; border-color: #e2e8f0; }
     </style>
 </head>
 <body>
@@ -96,7 +104,7 @@
         </div>
     </header>
     <form id="bafForm">
-        <input type="hidden" id="scriptUrl" value="https://script.google.com/macros/s/AKfycbx3U8N5CW4rUBoAZaG0U-mwrCbVEci0pee0m3-iNuFkV4Pivz8kZB2FqMsbybWctPRjLA/exec">
+        <input type="hidden" id="scriptUrl" value="TUTAJ_WKLEJ_SWOJ_NOWY_URL_SKRYPTU">
         <input type="hidden" name="doradca" value="Weronika Lekston">
         
         <div style="opacity: 0; position: absolute; top: 0; left: 0; height: 0; width: 0; z-index: -1;">
@@ -115,21 +123,33 @@
         </div>
 
         <div class="form-section">
-            <h3>Dokument Tożsamości</h3>
+            <h3>Dokument Tożsamości i Dochód</h3>
             <div class="grid">
                 <div class="form-group"><label>Seria i numer dowodu osobistego</label><input type="text" name="dowod" required></div>
                 <div class="form-group"><label>Data wydania</label><input type="date" name="data_wydania" required></div>
                 <div class="form-group"><label>Data ważności</label><input type="date" name="data_waznosci" required></div>
                 <div class="form-group"><label>Stan cywilny</label><select name="stan_cywilny"><option value="żonaty/zamężna">Żonaty / Zamężna</option><option value="kawaler/panna">Kawaler / Panna</option><option value="rozwiedziony/a">Rozwiedziony / a</option><option value="wdowiec/wdowa">Wdowiec / Wdowa</option></select></div>
                 <div class="form-group"><label>Rozdzielność majątkowa?</label><select name="rozdzielnosc"><option value="Nie">Nie</option><option value="Tak">Tak</option><option value="Nie dotyczy">Nie dotyczy</option></select></div>
+                
+                <div class="form-group">
+                    <label>Główne źródło dochodu</label>
+                    <select name="zrodlo_glowne" id="zrodlo_glowne" onchange="handlePrimarySourceChange()" required>
+                        <option value="Działalność Gospodarcza">Działalność Gospodarcza</option>
+                        <option value="Spółka">Spółka</option>
+                        <option value="Umowa o pracę">Umowa o pracę</option>
+                        <option value="Umowa zlecenie">Umowa zlecenie</option>
+                        <option value="Emerytura / Renta">Emerytura / Renta</option>
+                    </select>
+                </div>
             </div>
         </div>
 
         <div class="form-section">
-            <h3>Dane Firmowe i Adresowe</h3>
+            <h3>Dane Firmowe / Zatrudnienia</h3>
             <div class="grid">
-                <div class="form-group"><label>NIP</label><input type="text" name="nip" required></div>
-                <div class="form-group"><label>Data otwarcia działalności</label><input type="date" name="data_idg" required></div>
+                <div class="form-group"><label id="label_nip">NIP</label><input type="text" name="nip" required></div>
+                <div class="form-group"><label id="label_data_idg">Data otwarcia działalności</label><input type="date" name="data_idg" required></div>
+                
                 <div class="form-group" style="grid-column: span 2;"><label>Adres zamieszkania (Ulica, nr domu/lokalu, kod pocztowy, miasto)</label><input type="text" name="adres_zam" required></div>
                 <div class="form-group"><label>Mieszka pod tym adresem od (mm/rrrr)</label><input type="text" name="data_zam" id="data_zam" placeholder="MM/RRRR" maxlength="7" required></div>
                 <div class="form-group"><label>Forma własności mieszkania</label><select name="wlasnosc"><option value="Własnościowe">Własnościowe</option><option value="Wynajmowane">Wynajmowane</option><option value="Przy rodzinie">Przy rodzinie</option></select></div>
@@ -141,9 +161,16 @@
                     </div>
                     <div id="koresp_input_div" style="display: none;"><input type="text" name="adres_koresp" id="adres_koresp_input" placeholder="Wpisz adres korespondencyjny"></div>
                 </div>
-                <div class="form-group"><label>Liczba pracowników na UOP</label><input type="number" name="pracownicy" value="0" min="0" onfocus="if(this.value=='0') this.value=''" onblur="if(this.value=='') this.value='0'"></div>
-                <div class="form-group"><label>Obsługa klientów</label><select name="klienci"><option value="Jeden główny klient">Jeden główny klient</option><option value="Kilku klientów">Kilku klientów</option><option value="Wielu klientów (detal)">Wielu klientów (detal)</option></select></div>
+
+                <div class="form-group"><label>Liczba pracowników na UOP</label><input type="number" name="pracownicy" id="pracownicy_input" value="0" min="0" onfocus="if(this.value=='0') this.value=''" onblur="if(this.value=='') this.value='0'"></div>
+                <div class="form-group"><label>Obsługa klientów</label><select name="klienci" id="klienci_select"><option value="Jeden główny klient">Jeden główny klient</option><option value="Kilku klientów">Kilku klientów</option><option value="Wielu klientów (detal)">Wielu klientów (detal)</option></select></div>
             </div>
+        </div>
+
+        <div class="form-section">
+            <h3>Dodatkowe źródła dochodu</h3>
+            <div id="additional_sources_list"></div>
+            <button type="button" class="add-source-btn" onclick="addSource()">+ Dodaj kolejne źródło dochodu</button>
         </div>
 
         <div class="form-section">
@@ -162,6 +189,11 @@
                         <div style="flex-grow: 1;"><div id="dzieci_lata_container" class="children-years-container"></div></div>
                     </div>
                     <input type="hidden" name="dzieci" id="dzieci_final">
+                </div>
+
+                <div class="form-group" style="grid-column: span 2;">
+                    <label>Zobowiązania inne (alimenty, komornik itp.)</label>
+                    <input type="text" name="alimenty" placeholder="Wpisz jeśli dotyczy, w przeciwnym razie zostaw puste">
                 </div>
 
                 <div class="form-group" style="grid-column: span 2; background-color: #f0fff4; padding: 15px; border-radius: 8px; border: 1px solid #c6f6d5;">
@@ -187,7 +219,7 @@
                     </div>
                 </div>
 
-                <div class="form-group" style="grid-column: span 2;"><label>Uwagi</label><textarea name="uwagi"></textarea></div>
+                <div class="form-group" style="grid-column: span 2;"><label>Uwagi</label><textarea name="uwagi" id="uwagi_textarea"></textarea></div>
             </div>
         </div>
 
@@ -223,6 +255,72 @@
     dateInput.addEventListener('input', function(e) { let v = this.value.replace(/\D/g, ''); if (v.length > 6) v = v.slice(0, 6); if (v.length > 2) { this.value = v.slice(0, 2) + '/' + v.slice(2); } else { this.value = v; } });
     function generateChildInputs(count) { const container = document.getElementById('dzieci_lata_container'); container.innerHTML = ''; count = parseInt(count); if (isNaN(count) || count <= 0) return; for (let i = 1; i <= count; i++) { const input = document.createElement('input'); input.type = 'number'; input.placeholder = 'Rok ur. ' + i; input.className = 'child-year-input'; input.min = '1990'; input.max = new Date().getFullYear(); container.appendChild(input); } }
     
+    // --- OBSŁUGA GŁÓWNEGO ŹRÓDŁA ---
+    function handlePrimarySourceChange() {
+        const source = document.getElementById('zrodlo_glowne').value;
+        const labelNip = document.getElementById('label_nip');
+        const labelDate = document.getElementById('label_data_idg');
+        const workersInput = document.getElementById('pracownicy_input');
+        const clientsSelect = document.getElementById('klienci_select');
+
+        workersInput.disabled = false;
+        workersInput.classList.remove('disabled-field');
+        clientsSelect.disabled = false;
+        clientsSelect.classList.remove('disabled-field');
+
+        if (source === 'Działalność Gospodarcza' || source === 'Spółka') {
+            labelNip.innerText = 'NIP';
+            labelDate.innerText = 'Data otwarcia działalności';
+        } else {
+            labelNip.innerText = 'NIP pracodawcy';
+            if (source === 'Emerytura / Renta') {
+                labelDate.innerText = 'Emerytura / Renta od';
+            } else {
+                labelDate.innerText = 'Zatrudniony od';
+            }
+            workersInput.disabled = true;
+            workersInput.value = "";
+            workersInput.classList.add('disabled-field');
+            clientsSelect.disabled = true;
+            clientsSelect.classList.add('disabled-field');
+        }
+    }
+
+    // --- OBSŁUGA DODATKOWYCH ŹRÓDEŁ ---
+    function addSource() {
+        const container = document.getElementById('additional_sources_list');
+        const div = document.createElement('div');
+        div.className = 'source-row';
+        div.innerHTML = `
+            <select class="extra-source-type" onchange="toggleExtraDescription(this)">
+                <option value="Umowa o pracę">Umowa o pracę</option>
+                <option value="Umowa zlecenie">Umowa zlecenie</option>
+                <option value="Działalność Gospodarcza">Działalność Gospodarcza</option>
+                <option value="Spółka">Spółka</option>
+                <option value="Emerytura / Renta">Emerytura / Renta</option>
+                <option value="Najem">Najem</option>
+                <option value="Inne">Inne</option>
+            </select>
+            <input type="text" class="extra-source-amount" placeholder="Kwota netto (PLN)">
+            <input type="text" class="extra-source-desc" placeholder="Opis (wymagane przy 'Inne')" style="display: none;">
+            <button type="button" class="remove-source-btn" onclick="this.parentElement.remove()">✕</button>
+        `;
+        container.appendChild(div);
+    }
+
+    function toggleExtraDescription(selectElem) {
+        const row = selectElem.parentElement;
+        const descInput = row.querySelector('.extra-source-desc');
+        if (selectElem.value === 'Inne') {
+            descInput.style.display = 'block';
+            descInput.required = true;
+        } else {
+            descInput.style.display = 'none';
+            descInput.required = false;
+            descInput.value = '';
+        }
+    }
+
     let accumulatedFiles = [];
     const fileInput = document.getElementById('file_upload');
     const fileList = document.getElementById('fileList');
@@ -239,8 +337,30 @@
     document.getElementById('bafForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         if (document.getElementById('website_hp').value !== "") return;
+        
+        let extraSourcesText = "";
+        const sourceRows = document.querySelectorAll('.source-row');
+        if (sourceRows.length > 0) {
+            let sourcesArr = [];
+            sourceRows.forEach(row => {
+                const type = row.querySelector('.extra-source-type').value;
+                const amount = row.querySelector('.extra-source-amount').value;
+                const desc = row.querySelector('.extra-source-desc').value;
+                let text = `${type}: ${amount}`;
+                if(type === 'Inne' && desc) text += ` (${desc})`;
+                sourcesArr.push(text);
+            });
+            extraSourcesText = "DODATKOWE ŹRÓDŁA: " + sourcesArr.join(", ");
+        }
+
+        const userRemarks = document.getElementById('uwagi_textarea').value;
+        let finalRemarks = userRemarks;
+        if (extraSourcesText) {
+            finalRemarks = finalRemarks ? extraSourcesText + "; " + finalRemarks : extraSourcesText;
+        }
+        
         const btn = document.getElementById('btnSubmit'); const overlay = document.getElementById('loadingOverlay'); const msg = document.getElementById('message'); const scriptURL = document.getElementById('scriptUrl').value;
-        if (scriptURL.includes("TUTAJ_WKLEJ")) { alert("Błąd konfiguracji URL"); return; }
+        if (scriptURL.includes("TUTAJ_WKLEJ")) { alert("Błąd konfiguracji URL. Skontaktuj się z administratorem."); return; }
 
         const count = document.getElementById('ile_dzieci').value;
         const yearsInputs = document.querySelectorAll('.child-year-input');
@@ -258,17 +378,21 @@
         try {
             const formDataObj = {};
             new FormData(document.forms['bafForm']).forEach((value, key) => { if (key !== 'files') formDataObj[key] = value; });
+            
+            formDataObj['uwagi'] = finalRemarks; 
+            
             formDataObj['doradca'] = document.querySelector('input[name="doradca"]').value;
             let filesData = [];
             if (accumulatedFiles.length > 0) { filesData = await Promise.all(accumulatedFiles.map(file => getBase64(file))); }
             const response = await fetch(scriptURL, { method: 'POST', body: JSON.stringify({ formData: formDataObj, files: filesData }) });
             const result = await response.json();
             overlay.style.display = 'none'; msg.style.display = 'block';
-            if (result.result === 'success') { msg.className = 'success'; msg.innerHTML = '<strong>Sukces!</strong> Formularz i załączniki zostały przesłane. Dziękujemy.'; document.forms['bafForm'].reset(); document.getElementById('dzieci_lata_container').innerHTML = ''; accumulatedFiles = []; renderFileList(); toggleKoresp(false); togglePolecenie(false); } 
+            if (result.result === 'success') { msg.className = 'success'; msg.innerHTML = '<strong>Sukces!</strong> Formularz i załączniki zostały przesłane. Dziękujemy.'; document.forms['bafForm'].reset(); document.getElementById('dzieci_lata_container').innerHTML = ''; document.getElementById('additional_sources_list').innerHTML = ''; accumulatedFiles = []; renderFileList(); toggleKoresp(false); togglePolecenie(false); handlePrimarySourceChange(); } 
             else { throw new Error(result.error || "Nieznany błąd serwera."); }
         } catch (error) { overlay.style.display = 'none'; msg.style.display = 'block'; msg.className = 'error'; msg.innerHTML = 'Wystąpił błąd: ' + error.message; btn.disabled = false; }
     });
-    toggleKoresp(false); togglePolecenie(false);
+    
+    toggleKoresp(false); togglePolecenie(false); handlePrimarySourceChange();
 </script>
 </body>
 </html>
