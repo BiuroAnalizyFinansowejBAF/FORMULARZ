@@ -6,6 +6,7 @@
     <title>Formularz Klienta BAF - Mateusz Dzidkowski</title>
     <link rel="icon" type="image/png" href="baf_logo_p.png">
     <style>
+        /* (Twoje style pozostają bez zmian - skróciłem dla czytelności, wklej tu swoje style CSS) */
         :root { --primary-color: #1a365d; --accent-color: #2b6cb0; --bg-color: #f7fafc; --white: #ffffff; --text-color: #2d3748; --border-radius: 8px; }
         body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; display: flex; justify-content: center; }
         .container { background: var(--white); width: 100%; max-width: 900px; padding: 40px; border-radius: var(--border-radius); box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: relative; }
@@ -72,7 +73,6 @@
         .success { background-color: #c6f6d5; color: #22543d; border: 1px solid #9ae6b4; }
         .error { background-color: #fed7d7; color: #822727; border: 1px solid #feb2b2; }
 
-        /* Style dla dodatkowych źródeł */
         .add-source-btn { background-color: #48bb78; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 5px; transition: 0.3s; margin-bottom: 10px; font-weight: 600; }
         .add-source-btn:hover { background-color: #38a169; }
         .source-row { display: grid; grid-template-columns: 1.5fr 1fr 2fr 30px; gap: 10px; margin-bottom: 10px; align-items: start; background: #fff; border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; }
@@ -105,7 +105,7 @@
         </div>
     </header>
     <form id="bafForm">
-        <input type="hidden" id="scriptUrl" value="https://script.google.com/macros/s/AKfycbx3U8N5CW4rUBoAZaG0U-mwrCbVEci0pee0m3-iNuFkV4Pivz8kZB2FqMsbybWctPRjLA/exec">
+        <input type="hidden" id="scriptUrl" value="TUTAJ_WKLEJ_SWOJ_NOWY_URL_SKRYPTU">
         <input type="hidden" name="doradca" value="Mateusz Dzidkowski">
         
         <div style="opacity: 0; position: absolute; top: 0; left: 0; height: 0; width: 0; z-index: -1;">
@@ -192,6 +192,11 @@
                     <input type="hidden" name="dzieci" id="dzieci_final">
                 </div>
 
+                <div class="form-group" style="grid-column: span 2;">
+                    <label>Zobowiązania inne (alimenty, komornik itp.)</label>
+                    <input type="text" name="alimenty" placeholder="Wpisz jeśli dotyczy, w przeciwnym razie zostaw puste">
+                </div>
+                
                 <div class="form-group" style="grid-column: span 2; background-color: #f0fff4; padding: 15px; border-radius: 8px; border: 1px solid #c6f6d5;">
                     <label style="margin-bottom: 10px;">Czy są Państwo z polecenia?</label>
                     <div class="radio-group">
@@ -251,9 +256,7 @@
     dateInput.addEventListener('input', function(e) { let v = this.value.replace(/\D/g, ''); if (v.length > 6) v = v.slice(0, 6); if (v.length > 2) { this.value = v.slice(0, 2) + '/' + v.slice(2); } else { this.value = v; } });
     function generateChildInputs(count) { const container = document.getElementById('dzieci_lata_container'); container.innerHTML = ''; count = parseInt(count); if (isNaN(count) || count <= 0) return; for (let i = 1; i <= count; i++) { const input = document.createElement('input'); input.type = 'number'; input.placeholder = 'Rok ur. ' + i; input.className = 'child-year-input'; input.min = '1990'; input.max = new Date().getFullYear(); container.appendChild(input); } }
     
-    // --- NOWA LOGIKA ŹRÓDEŁ DOCHODU ---
-    
-    // 1. Obsługa Głównego Źródła
+    // --- OBSŁUGA GŁÓWNEGO ŹRÓDŁA ---
     function handlePrimarySourceChange() {
         const source = document.getElementById('zrodlo_glowne').value;
         const labelNip = document.getElementById('label_nip');
@@ -261,7 +264,6 @@
         const workersInput = document.getElementById('pracownicy_input');
         const clientsSelect = document.getElementById('klienci_select');
 
-        // Resetowanie stanu (enable)
         workersInput.disabled = false;
         workersInput.classList.remove('disabled-field');
         clientsSelect.disabled = false;
@@ -270,27 +272,22 @@
         if (source === 'Działalność Gospodarcza' || source === 'Spółka') {
             labelNip.innerText = 'NIP';
             labelDate.innerText = 'Data otwarcia działalności';
-            // Pola pozostają aktywne
         } else {
             labelNip.innerText = 'NIP pracodawcy';
-            
             if (source === 'Emerytura / Renta') {
                 labelDate.innerText = 'Emerytura / Renta od';
             } else {
                 labelDate.innerText = 'Zatrudniony od';
             }
-
-            // Blokowanie pól
             workersInput.disabled = true;
             workersInput.value = "";
             workersInput.classList.add('disabled-field');
-            
             clientsSelect.disabled = true;
             clientsSelect.classList.add('disabled-field');
         }
     }
 
-    // 2. Obsługa Dodatkowych Źródeł
+    // --- OBSŁUGA DODATKOWYCH ŹRÓDEŁ ---
     function addSource() {
         const container = document.getElementById('additional_sources_list');
         const div = document.createElement('div');
@@ -324,7 +321,6 @@
             descInput.value = '';
         }
     }
-    // --- KONIEC NOWEJ LOGIKI ---
 
     let accumulatedFiles = [];
     const fileInput = document.getElementById('file_upload');
@@ -343,9 +339,6 @@
         e.preventDefault();
         if (document.getElementById('website_hp').value !== "") return;
         
-        // --- PRZYGOTOWANIE DANYCH PRZED WYSYŁKĄ ---
-        
-        // 1. Zbieranie dodatkowych źródeł
         let extraSourcesText = "";
         const sourceRows = document.querySelectorAll('.source-row');
         if (sourceRows.length > 0) {
@@ -354,33 +347,21 @@
                 const type = row.querySelector('.extra-source-type').value;
                 const amount = row.querySelector('.extra-source-amount').value;
                 const desc = row.querySelector('.extra-source-desc').value;
-                
                 let text = `${type}: ${amount}`;
-                if(type === 'Inne' && desc) {
-                    text += ` (${desc})`;
-                }
+                if(type === 'Inne' && desc) text += ` (${desc})`;
                 sourcesArr.push(text);
             });
             extraSourcesText = "DODATKOWE ŹRÓDŁA: " + sourcesArr.join(", ");
         }
 
-        // 2. Łączenie z uwagami
         const userRemarks = document.getElementById('uwagi_textarea').value;
         let finalRemarks = userRemarks;
         if (extraSourcesText) {
-            if (finalRemarks) {
-                finalRemarks = extraSourcesText + "; " + finalRemarks;
-            } else {
-                finalRemarks = extraSourcesText;
-            }
+            finalRemarks = finalRemarks ? extraSourcesText + "; " + finalRemarks : extraSourcesText;
         }
         
-        // Aktualizacja pola w formularzu (tymczasowa, do wysyłki)
-        // Tworzymy kopię danych, żeby nie psuć widoku użytkownikowi
-        // Ale najprościej jest podmienić wartość w FormData
-        
         const btn = document.getElementById('btnSubmit'); const overlay = document.getElementById('loadingOverlay'); const msg = document.getElementById('message'); const scriptURL = document.getElementById('scriptUrl').value;
-        if (scriptURL.includes("TUTAJ_WKLEJ")) { alert("Błąd konfiguracji URL"); return; }
+        if (scriptURL.includes("TUTAJ_WKLEJ")) { alert("Błąd konfiguracji URL. Skontaktuj się z administratorem."); return; }
 
         const count = document.getElementById('ile_dzieci').value;
         const yearsInputs = document.querySelectorAll('.child-year-input');
@@ -399,7 +380,6 @@
             const formDataObj = {};
             new FormData(document.forms['bafForm']).forEach((value, key) => { if (key !== 'files') formDataObj[key] = value; });
             
-            // NADPISANIE UWAG (żeby zawierały dodatkowe źródła)
             formDataObj['uwagi'] = finalRemarks; 
             
             formDataObj['doradca'] = document.querySelector('input[name="doradca"]').value;
@@ -413,7 +393,6 @@
         } catch (error) { overlay.style.display = 'none'; msg.style.display = 'block'; msg.className = 'error'; msg.innerHTML = 'Wystąpił błąd: ' + error.message; btn.disabled = false; }
     });
     
-    // Inicjalizacja stanu
     toggleKoresp(false); togglePolecenie(false); handlePrimarySourceChange();
 </script>
 </body>
