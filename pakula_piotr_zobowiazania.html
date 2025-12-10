@@ -206,15 +206,35 @@
         const groupEnd = standardContainer.querySelector('.field-group-end');
         const groupRate = standardContainer.querySelector('.field-group-rate');
 
-        standardContainer.classList.remove('hidden'); otherContainer.classList.add('hidden');
-        groupEnd.classList.remove('field-disabled'); groupRate.classList.remove('field-disabled');
-        
-        if (type.startsWith('f_')) { row.classList.add('firm-row'); } else { row.classList.remove('firm-row'); }
-        if (type === 'karta' || type === 'limit' || type === 'f_karta' || type === 'f_limit') {
-            groupEnd.classList.add('field-disabled'); groupEnd.querySelector('input').value = ''; 
-            groupRate.classList.add('field-disabled'); groupRate.querySelector('input').value = ''; 
-        } else if (type === 'inne') {
-            standardContainer.classList.add('hidden'); otherContainer.classList.remove('hidden'); row.classList.remove('firm-row');
+        // Pola wymagane
+        const bankInput = row.querySelector('.input-bank');
+        const amountInput = row.querySelector('.input-amount');
+
+        if (type === 'inne') {
+            standardContainer.classList.add('hidden'); 
+            otherContainer.classList.remove('hidden');
+            row.classList.remove('firm-row');
+            
+            // USUWANIE WYMAGALNOŚCI
+            bankInput.removeAttribute('required');
+            amountInput.removeAttribute('required');
+        } else {
+            standardContainer.classList.remove('hidden'); 
+            otherContainer.classList.add('hidden');
+            
+            // PRZYWRACANIE WYMAGALNOŚCI
+            bankInput.setAttribute('required', 'required');
+            amountInput.setAttribute('required', 'required');
+
+            groupEnd.classList.remove('field-disabled'); 
+            groupRate.classList.remove('field-disabled');
+            
+            if (type.startsWith('f_')) { row.classList.add('firm-row'); } else { row.classList.remove('firm-row'); }
+            
+            if (type === 'karta' || type === 'limit' || type === 'f_karta' || type === 'f_limit') {
+                groupEnd.classList.add('field-disabled'); groupEnd.querySelector('input').value = ''; 
+                groupRate.classList.add('field-disabled'); groupRate.querySelector('input').value = ''; 
+            }
         }
     }
     function removeRow(id) { const row = document.getElementById(`row_${id}`); if (row) row.remove(); }
@@ -245,15 +265,12 @@
                 const type = document.getElementById(`type_${id}`).value;
                 const v = (sel) => row.querySelector(sel).value;
 
-                // !!! ZMODYFIKOWANA LOGIKA MAPOWANIA PÓL !!!
-                // Dodano obsługę 'chwilowka', 'allegro', 'hipoteka_prywatna' jako kredyty prywatne
                 if (type === 'kredyt' || type === 'chwilowka' || type === 'allegro' || type === 'hipoteka_prywatna') {
                     idx_loan++; let i = idx_loan;
                     formDataObj[`bank${i}`] = v('.input-bank'); formDataObj[`kwota${i}`] = v('.input-amount');
                     formDataObj[`waluta${i}`] = v('.input-currency'); formDataObj[`opr${i}`] = v('.input-interest');
                     formDataObj[`data${i}`] = v('.input-date-start'); formDataObj[`koniec${i}`] = v('.input-date-end');
                     formDataObj[`saldo${i}`] = v('.input-balance'); formDataObj[`rata${i}`] = v('.input-rate');
-                    
                     if (type === 'chwilowka') formDataObj[`rodzaj${i}`] = "Chwilówka / Pozabankowe";
                     else if (type === 'allegro') formDataObj[`rodzaj${i}`] = "Allegro Pay / PayPo / Raty 0%";
                     else if (type === 'hipoteka_prywatna') formDataObj[`rodzaj${i}`] = "Kredyt Hipoteczny (zabezpieczony)";
@@ -274,7 +291,6 @@
                     formDataObj[`fwaluta${i}`] = v('.input-currency'); formDataObj[`fopr${i}`] = v('.input-interest');
                     formDataObj[`fdata${i}`] = v('.input-date-start'); formDataObj[`fkoniec${i}`] = v('.input-date-end');
                     formDataObj[`fsaldo${i}`] = v('.input-balance'); formDataObj[`frata${i}`] = v('.input-rate');
-                    
                     if (type === 'f_kredyt_ratalny') formDataObj[`frodzaj${i}`] = "Kredyt Ratalny Firmowy";
                     else if (type === 'f_leasing_operacyjny') formDataObj[`frodzaj${i}`] = "Leasing Operacyjny";
                     else if (type === 'f_leasing_finansowy') formDataObj[`frodzaj${i}`] = "Leasing Finansowy";
