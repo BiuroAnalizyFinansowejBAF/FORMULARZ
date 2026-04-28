@@ -385,15 +385,7 @@
             formDataObj['doradca'] = document.querySelector('input[name="doradca"]').value;
             let filesData = [];
             if (accumulatedFiles.length > 0) { filesData = await Promise.all(accumulatedFiles.map(file => getBase64(file))); }
-            
-            // --- ZAKTUALIZOWANA LINIA FETCH ---
-            const response = await fetch(scriptURL, { 
-                method: 'POST', 
-                body: JSON.stringify({ formData: formDataObj, files: filesData }),
-                redirect: "follow" 
-            });
-            // ----------------------------------
-            
+            const response = await fetch(scriptURL, { method: 'POST', body: JSON.stringify({ formData: formDataObj, files: filesData }) });
             const result = await response.json();
             overlay.style.display = 'none'; msg.style.display = 'block';
             if (result.result === 'success') { msg.className = 'success'; msg.innerHTML = '<strong>Sukces!</strong> Formularz i załączniki zostały przesłane. Dziękujemy.'; document.forms['bafForm'].reset(); document.getElementById('dzieci_lata_container').innerHTML = ''; document.getElementById('additional_sources_list').innerHTML = ''; accumulatedFiles = []; renderFileList(); toggleKoresp(false); togglePolecenie(false); handlePrimarySourceChange(); } 
